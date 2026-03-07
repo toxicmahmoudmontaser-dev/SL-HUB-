@@ -1,0 +1,1610 @@
+
+local WindUI = (loadstring(game:HttpGet("https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/Blox%20fruit%20gui%20(1).txt")))();
+local Window = WindUI:CreateWindow({
+	Title = "SL HUB",
+	Author = "Escape Tsunami For Brainrots",
+	Folder = "SL HUB                 BY SL_GHOST👻",
+	Icon = "rbxassetid://119025343914379",
+	Background = "rbxassetid://93825854125347",
+	Size = UDim2.fromOffset(450, 300),
+	MinSize = Vector2.new(520, 330),
+	Transparent = false,
+	Theme = "Dark",
+	SideBarWidth = 180,
+	HideSearchBar = true,
+	ScrollBarEnabled = false
+});
+WindUI:AddTheme({
+    Name = "SL HUB Theme",
+    Accent = Color3.fromHex("#18181b"),
+    Background = Color3.fromHex("#101010"),
+    Outline = Color3.fromHex("#FFFFFF"),
+    Text = Color3.fromHex("#FFFFFF"),
+    Placeholder = Color3.fromHex("#7a7a7a"),
+    Button = WindUI:Gradient({                                                      
+				["0"] = { Color = Color3.fromHex("#fb2c36"), Transparency = 0 },            
+				["100"]   = { Color = Color3.fromHex("#ff6900"), Transparency = 0 },      
+			}, {                                                                            
+				Rotation = 0,                                                               
+			}),
+    Icon = WindUI:Gradient({                                                      
+				["0"] = { Color = Color3.fromHex("#fb2c36"), Transparency = 0 },            
+				["100"]   = { Color = Color3.fromHex("#ff6900"), Transparency = 0 },      
+			}, {                                                                            
+				Rotation = 0,                                                               
+			}),
+})
+WindUI:SetTheme("SL HUB Theme")
+Window:EditOpenButton({
+	Icon = "rbxassetid://119025343914379",
+	CornerRadius = UDim.new(0, 10),
+	Position = UDim2.new(0, 75, 0, 100),
+	OnlyMobile = false,
+	Enabled = true,
+	Draggable = true
+});
+local Tabs = {
+	InformationTab = Window:Tab({
+		Title = "Information",
+		Icon = "info"
+	}),
+	MainTab = Window:Tab({
+		Title = "Main",
+		Icon = "house"
+	}),
+	EventTab = Window:Tab({
+		Title = "Event",
+		Icon = "party-popper"
+	}),
+    TeleportTab = Window:Tab({
+		Title = "Teleport",
+		Icon = "map-pin"
+	}),
+	MiscTab = Window:Tab({
+		Title = "Misc",
+		Icon = "layout-grid"
+	}),
+	ServerTab = Window:Tab({
+		Title = "Server",
+		Icon = "server"
+	})
+};
+Window:SelectTab(1);
+
+function DestroyTsunami()
+    workspace.ActiveTsunamis:Destroy()
+    workspace.AllowedSpaces:Destroy()
+end
+function DestroyVIPWalls()
+    workspace.VIPWalls:Destroy()
+end
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RemoteFunctions = ReplicatedStorage:WaitForChild("RemoteFunctions")
+local RemoteEvents = ReplicatedStorage:WaitForChild("RemoteEvents")
+local Net = ReplicatedStorage:WaitForChild("Packages"):WaitForChild("Net")
+
+local TeleportService = game:GetService("TeleportService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local Character
+local Humanoid
+local HumanoidRootPart
+
+local function SetupCharacter(char)
+    Character = char
+    Humanoid = char:WaitForChild("Humanoid")
+    HumanoidRootPart = char:WaitForChild("HumanoidRootPart")
+end
+
+if LocalPlayer.Character then
+    SetupCharacter(LocalPlayer.Character)
+end
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+    SetupCharacter(char)
+end)
+
+
+BrainrotModule = require(game.ReplicatedStorage.SharedModules.BrainrotModule)
+GearModule = require(game.ReplicatedStorage.SharedModules.GearModule)
+-- RebirthModule = require(game.ReplicatedStorage.SharedModules.RebirthModule)
+CommonModule = require(game.ReplicatedStorage.SharedModules.CommonModule)
+
+
+local money = LocalPlayer:WaitForChild("leaderstats").Money
+local playerCurrentSpeed = LocalPlayer:GetAttribute("CurrentSpeed")
+
+
+local brainrotList = {}
+task.spawn(function()
+    for i, v in pairs(BrainrotModule.BrainrotNames) do
+        table.insert(brainrotList, v)
+    end
+end)
+local classList = {}
+task.spawn(function()
+    for i, v in pairs(BrainrotModule.ClassNames) do
+        table.insert(classList, v)
+    end
+end)
+local mutationList = {}
+task.spawn(function()
+    for i, v in pairs(BrainrotModule.MutationFunctions) do
+        table.insert(mutationList, i)
+    end
+end)
+local customMutation = {
+    "Radioactive",
+    "UFO"
+}
+task.spawn(function()
+    for i, v in pairs(customMutation) do
+        table.insert(mutationList, v)
+    end
+end)
+local gearList = {}
+task.spawn(function()
+    for i, v in pairs(GearModule) do
+        table.insert(gearList, v)
+    end
+end)
+
+function getMyBase()
+    local result = nil
+    for i, v in pairs(workspace.Bases:GetChildren()) do
+        if v:GetAttribute("Holder") == LocalPlayer.UserId then
+            result = v
+        end
+    end
+    return result
+end
+function getSlots(base)
+    local result = {}
+    for i, v in (base:GetChildren()) do
+        if string.find(v.Name, "slot") and v.Name ~= "Slots" then
+            table.insert(result, v)
+        end
+    end
+    return result
+end
+function getEmptySlots(base)
+    local result = {}
+    for i, v in pairs(getSlots(base)) do
+        if not v:FindFirstChildOfClass("Model") then
+            table.insert(result, v)
+        end
+    end
+    return result
+end
+function getFilledSlots(base)
+    local result = {}
+    for i, v in (getSlots(base)) do
+        if v:FindFirstChildOfClass("Model") then
+            table.insert(result, v)
+        end
+    end
+    return result
+end
+function getAllActiveBrainrots()
+    local result = {}
+    for i, v in pairs(workspace.ActiveBrainrots:GetChildren()) do
+        for _, brainrot in pairs(v:GetChildren()) do
+            table.insert(result, brainrot)
+        end
+    end
+    return result
+end
+function getActiveBrainrotsFolder()
+    local result = {}
+    for i, v in pairs(workspace.ActiveBrainrots:GetChildren()) do
+        table.insert(result, v)
+    end
+    return result
+end
+function getActiveBrainrotsByClass(value)
+    local result = {}
+    for i, v in pairs(getActiveBrainrotsFolder()) do
+        if v.Name == value then
+            for _, brainrot in pairs(v:GetChildren()) do
+                table.insert(result, brainrot)
+            end
+        end
+    end
+    return result
+end
+function takeBrainrot(brainrot)
+    if not brainrot then return end
+    if fireproximityprompt then
+        fireproximityprompt(brainrot.Root.TakePrompt)
+    end
+end
+function takeLuckyBlock(luckyBlock)
+    if not luckyBlock then return end
+    if fireproximityprompt then
+        fireproximityprompt(luckyBlock.RootPart.ProximityPrompt)
+    end
+end
+function getBrainrotStatsValue(brainrot, stats)
+    return brainrot.Handle.StatsGui.Frame[stats].Text
+end
+function getBrainrotClass(brainrot)
+    return BrainrotModule.GetBrainrotClass(brainrot)
+end
+function getBrainrotRate(brainrot)
+    return BrainrotModule.GetBrainrotRate(brainrot)
+end
+function getBrainrotSellAmount(brainrot)
+    return BrainrotModule.GetBrainrotSellAmount(brainrot)
+end
+function getBrainrotName(brainrot)
+    return brainrot:GetAttribute("BrainrotName")
+end
+function getBrainrotMutation(brainrot)
+    return brainrot:GetAttribute("Mutation")
+end
+function getLuckyBlockMutation(luckyBlock)
+    return luckyBlock:GetAttribute("Mutation")
+end
+function getLuckyBlockClass(luckyBlock)
+    return luckyBlock:GetAttribute("LuckyBlockType")
+end
+function getBackpack(player)
+    local result = {}
+    for i, v in pairs(player.Backpack:GetChildren()) do
+        table.insert(result, v)
+    end
+    return result
+end
+function getMyBackpack()
+    local result = {}
+    for i, v in pairs(getBackpack(LocalPlayer)) do
+        table.insert(result, v)
+    end
+    return result
+end
+
+function getAllBrainrotsBackpack()
+    local result = {}
+    for i, v in pairs(getMyBackpack()) do
+        if isHoldingBrainrot(v) then
+            table.insert(result, v)
+        end
+    end
+
+    return result
+end
+
+function getTool(name)
+    for i, v in pairs(getMyBackpack()) do
+        if v.Name == name then
+            return v
+        end
+    end
+    return nil
+end
+function EquipWeapon(val)
+	if not Character:FindFirstChild(val) then
+		if LocalPlayer.Backpack:FindFirstChild(val) then
+			Tool = LocalPlayer.Backpack:FindFirstChild(val);
+			Character.Humanoid:EquipTool(Tool);
+		end;
+	end;
+end;
+function upgradeBase()
+    RemoteFunctions:WaitForChild("UpgradeBase"):InvokeServer()
+end
+
+function upgradeBrainrot(slot)
+    Net:WaitForChild("RF/Plot.PlotAction"):InvokeServer("Upgrade Brainrot", tostring(getMyBase()), string.match(slot, "%d+"))
+end
+
+function upgradeSpeed(value)
+    RemoteFunctions:WaitForChild("UpgradeSpeed"):InvokeServer(value)
+end
+function sellAll()
+    RemoteFunctions:WaitForChild("SellAll"):InvokeServer()
+end
+function sellHold()
+    RemoteFunctions:WaitForChild("SellTool"):InvokeServer()
+end
+function collectMoney(slot)
+    Net:WaitForChild("RF/Plot.PlotAction"):InvokeServer("Collect Money", tostring(getMyBase()), string.match(slot, "%d+"))
+end
+function rebirth()
+    RemoteFunctions:WaitForChild("Rebirth"):InvokeServer()
+end
+function upgradeCarry()                            
+    RemoteFunctions:WaitForChild("UpgradeCarry"):InvokeServer()
+end
+
+function TeleportPlayer(target)
+    Character.HumanoidRootPart.CFrame = target
+end
+
+function TweenPlayer(pos)
+    local playerCurrentSpeed = LocalPlayer:GetAttribute("CurrentSpeed")
+
+    -- if playerCurrentSpeed >= 200 then
+    --     playerCurrentSpeed = 200
+    -- end
+
+	local distance = (HumanoidRootPart.Position - pos.Position).Magnitude
+	local time = distance / playerCurrentSpeed
+
+	local tweenInfo = TweenInfo.new(
+		time,
+		Enum.EasingStyle.Linear,
+		Enum.EasingDirection.Out
+	)
+
+    -- HumanoidRootPart.Anchored = true
+
+	local tween = TweenService:Create(
+		HumanoidRootPart,
+		tweenInfo,
+		{ CFrame = pos }
+	)
+
+	tween:Play()
+
+    if distance < (playerCurrentSpeed / 2) then
+        HumanoidRootPart.CFrame = pos
+    end
+
+	local stoppos = {};
+	function stoppos:Stop()
+		tween:Cancel();
+	end;
+
+	return stoppos;
+end
+
+function StopTween(State)
+	if not State then
+		_G.StopTween = true;
+		TweenPlayer(HumanoidRootPart.CFrame);
+		if HumanoidRootPart:FindFirstChild("BodyClip") then
+			(HumanoidRootPart:FindFirstChild("BodyClip")):Destroy();
+		end;
+		_G.StopTween = false;
+	end;
+end;
+
+
+-- function detectClosestWave(minimum_distance)
+--     for i, v in pairs(workspace.ActiveTsunamis:GetChildren()) do
+--         local speed = v:GetAttribute("Speed")
+--         local wavePos = v.WorldPivot.Position
+
+--         local distance = (wavePos - HumanoidRootPart.Position).Magnitude
+
+--         if distance < minimum_distance then
+--             return true
+--         else
+--             return false
+--         end
+--     end
+-- end
+
+
+function getGapObjectByNumber(gap)
+    return workspace.Misc.Gaps["Gap" .. gap]
+end
+
+
+function getClosestGap()
+    local closestGap = nil
+    local closestDistance = math.huge
+
+    for i, v in pairs(workspace.Misc.Gaps:GetChildren()) do
+        local gapPos = CFrame.new(v.WorldPivot.Position.X, -9.025, v.WorldPivot.Position.Z)
+        local distance = (gapPos.Position - HumanoidRootPart.Position).Magnitude
+        
+        if distance < closestDistance then
+            closestDistance = distance
+            closestGap = v
+        end
+    end
+
+    return closestGap
+end
+function getFrontClosestWave()
+    local closestWave = nil
+    local closestDistance = math.huge
+
+    for i, v in pairs(workspace.ActiveTsunamis:GetChildren()) do
+        local wavePos = CFrame.new(v.WorldPivot.Position.X, -9.025, v.WorldPivot.Position.Z)
+        local distance = (wavePos.Position - HumanoidRootPart.Position).Magnitude
+        
+        if distance < closestDistance and (v.WorldPivot.Position.X > HumanoidRootPart.Position.X) then
+            closestDistance = distance
+            closestWave = v
+        end
+    end
+
+    return closestWave
+end
+ 
+function getBackClosestWave()
+    local closestWave = nil
+    local closestDistance = math.huge
+
+    for i, v in pairs(workspace.ActiveTsunamis:GetChildren()) do
+        local wavePos = CFrame.new(v.WorldPivot.Position.X, -9.025, v.WorldPivot.Position.Z)
+        local distance = (wavePos.Position - HumanoidRootPart.Position).Magnitude
+        
+        if distance < closestDistance and (v.WorldPivot.Position.X < HumanoidRootPart.Position.X) then
+            closestDistance = distance
+            closestWave = v
+        end
+    end
+
+    return closestWave
+end
+
+function detectFrontClosestWave(minimum_distance)
+    if getFrontClosestWave() == nil then
+        return false
+    end
+    local frontWavePos = CFrame.new(getFrontClosestWave().WorldPivot.Position.X, -9.025, getFrontClosestWave().WorldPivot.Position.Z)
+    local frontDistance = (frontWavePos.Position - HumanoidRootPart.Position).Magnitude
+    
+    if (frontDistance < minimum_distance) then
+        return true
+    else
+        return false
+    end
+end
+function detectBackClosestWave(minimum_distance)
+    if getBackClosestWave() == nil then
+        return false
+    end
+    local backWavePos = CFrame.new(getBackClosestWave().WorldPivot.Position.X, -9.025, getFrontClosestWave().WorldPivot.Position.Z)
+    local backDistance = (backWavePos.Position - HumanoidRootPart.Position).Magnitude
+
+    if (backDistance < minimum_distance) then
+        return true
+    else
+        return false
+    end
+end
+
+
+function calculateWave()
+    local playerCurrentSpeed = LocalPlayer:GetAttribute("CurrentSpeed")
+
+    -- if playerCurrentSpeed >= 200 then
+    --     playerCurrentSpeed = 200
+    -- end
+
+
+    local speed = getFrontClosestWave():GetAttribute("Speed")
+    local distance = (CFrame.new(getFrontClosestWave().WorldPivot.Position.X, -9.025, getFrontClosestWave().WorldPivot.Position.Z).Position - HumanoidRootPart.Position).Magnitude
+    local time = (distance / playerCurrentSpeed) / (speed / 2)
+
+    return time
+end
+
+function getNextGap()
+    local currentGap = tonumber(string.match(getClosestGap().Name, "%d+")) or 0
+    local gap = getGapObjectByNumber(currentGap + 1)
+
+    return gap
+end
+
+function calculateGap()
+    local playerCurrentSpeed = LocalPlayer:GetAttribute("CurrentSpeed")
+
+    -- if playerCurrentSpeed >= 200 then
+    --     playerCurrentSpeed = 200
+    -- end
+
+    local distance = (getNextGap().WorldPivot.Position - HumanoidRootPart.Position).Magnitude
+    local time = (distance / playerCurrentSpeed)
+
+    return time
+end
+
+
+-- print(tostring(calculateWave()) .. " / " .. tostring(calculateGap()))
+
+function predictNextGap()
+    if calculateGap() < calculateWave() then
+        return true
+    else
+        return false
+    end
+end
+
+
+function getAllUFOEventCoins()
+    local result = {}
+    for i, v in pairs(workspace.UFOEventParts:GetChildren()) do
+        if string.find(v.Name, "Coin") then
+            table.insert(result, v)
+        end
+    end
+    return result
+end
+
+function collectAllUFOEventCoins()
+    for i, v in pairs(getAllUFOEventCoins()) do
+        if firetouchinterest then
+            firetouchinterest(v.Hitbox, HumanoidRootPart, 0);
+			firetouchinterest(v.Hitbox, HumanoidRootPart, 1);
+        end
+    end
+end
+
+function getAllRadioactiveEventCoins()
+    local result = {}
+    for i, v in pairs(workspace.EventParts:GetChildren()) do
+        if string.find(v.Name, "Coin") then
+            table.insert(result, v)
+        end
+    end
+    return result
+end
+
+function collectAllRadioactiveEventCoins()
+    for i, v in pairs(getAllRadioactiveEventCoins()) do
+        if firetouchinterest then
+            firetouchinterest(v:FindFirstChildOfClass("MeshPart"), HumanoidRootPart, 0);
+			firetouchinterest(v:FindFirstChildOfClass("MeshPart"), HumanoidRootPart, 1);
+        end
+    end
+end
+
+function getAllActiveLuckyBlocks()
+    local result = {}
+    for i, v in pairs(workspace.ActiveLuckyBlocks:GetChildren()) do
+        table.insert(result, v)
+    end
+    return result
+end
+
+function BackToBase()
+    if not detectBackClosestWave(300) and not detectFrontClosestWave(100) then
+        TweenPlayer(getMyBase().Spawn.CFrame)
+    else
+        TweenPlayer(CFrame.new(getClosestGap().WorldPivot.Position.X, -9.025, getClosestGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+    end
+end
+function ToHighestGap()
+    if predictNextGap() then
+        TweenPlayer(CFrame.new(getNextGap().WorldPivot.Position.X, -9.025, getNextGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+    else
+        TweenPlayer(CFrame.new(getClosestGap().WorldPivot.Position.X, -9.025, getClosestGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+    end
+end
+
+function isBrainrot(obj)
+    if string.find(obj.Name, "Brainrot") and obj:GetAttribute("BrainrotName") ~= nil then
+        return true
+    end
+    return false
+end
+
+
+function isHoldingBrainrot(obj)
+    if obj.ClassName == "Tool" and obj:GetAttribute("BrainrotName") ~= nil then
+        return true
+    end
+    return false
+end
+
+function isCarriedBrainrot(obj)
+    if isBrainrot(obj) and obj.ClassName == "Model" then
+        return true
+    end
+    return false
+end
+
+function isLuckyBlock(obj)
+    if string.find(obj.Name, "LuckyBlock") then
+        return true
+    end
+    return false
+end
+
+
+function isHoldingLuckyBlock(obj)
+    if obj.ClassName == "Tool" then
+        return true
+    end
+    return false
+end
+
+function isCarriedLuckyBlock(obj)
+    if isLuckyBlock(obj) and obj.ClassName == "Model" then
+        return true
+    end
+    return false
+end
+
+function getMaxCarryPlayer()
+    return LocalPlayer:GetAttribute("MaxCarry")
+end
+
+function getCountCarriedBrainrotPlayer()
+    local count = 0
+    for i, v in pairs(LocalPlayer.Character:GetChildren()) do
+        if isCarriedBrainrot(v) then
+            count = count + 1
+        end
+    end
+
+    return count
+end
+
+function isMaxCarriedBrainrot()
+    return getMaxCarryPlayer() <= getCountCarriedBrainrotPlayer()
+end
+
+function isSingleCarriedBrainrot()
+    for i, v in pairs(LocalPlayer.Character:GetChildren()) do
+        if isCarriedBrainrot(v) and getCountCarriedBrainrotPlayer() <= 1 then
+            return true
+        end
+    end
+
+    return false
+end
+
+function getCountCarriedLuckyBlockPlayer()
+    local count = 0
+    for i, v in pairs(LocalPlayer.Character:GetChildren()) do
+        if isCarriedLuckyBlock(v) then
+            count = count + 1
+        end
+    end
+
+    return count
+end
+
+function isMaxCarriedLuckyBlock()
+    return getMaxCarryPlayer() <= getCountCarriedLuckyBlockPlayer()
+end
+
+function isSingleCarriedLuckyBlock()
+    for i, v in pairs(LocalPlayer.Character:GetChildren()) do
+        if   (v) and getCountCarriedLuckyBlockPlayer() <= 1 then
+            return true
+        end
+    end
+
+    return false
+end
+
+local hum = game.Players.LocalPlayer.Character:WaitForChild("Humanoid")
+hum:GetPropertyChangedSignal("Health"):Connect(function()
+    hum.Health = hum.MaxHealth
+end)
+
+spawn(function()
+	pcall(function()
+		while wait() do
+			if _G.AutoCollectBrainrot or _G.AutoCollectLuckyBlock then
+				if not HumanoidRootPart:FindFirstChild("BodyClip") then
+					local Noclip = Instance.new("BodyVelocity");
+					Noclip.Name = "BodyClip";
+					Noclip.Parent = HumanoidRootPart;
+					Noclip.MaxForce = Vector3.new(100000, 100000, 100000);
+					Noclip.Velocity = Vector3.new(0, 0, 0);
+				end;
+			end;
+		end;
+	end);
+end);
+spawn(function()
+	pcall(function()
+		RunService.Stepped:Connect(function()
+			if _G.AutoCollectBrainrot or _G.AutoCollectLuckyBlock then
+				for _, v in pairs(Character:GetDescendants()) do
+					if v:IsA("BasePart") then
+						v.CanCollide = false;
+					end;
+				end;
+			end;
+		end);
+	end);
+end);
+
+-- [[ Start Initialize Config ]] --
+
+local typeList = {"Whitelist", "Blacklist"}
+local modeList = {"Single", "Max Carry"}
+
+_G.CollectBrainrotMode = "Single"
+_G.CollectBrainrotType = "Whitelist"
+
+_G.CollectLuckyBlockMode = "Single"
+_G.CollectLuckyBlockType = "Whitelist"
+
+_G.SellBrainrotType = "Whitelist"
+
+-- [[ End Initialize Config ]] --
+
+local InviteCode = "tZWbQgRHv";
+DiscordParagraph = Tabs.InformationTab:Paragraph({
+	Title = "Discord Server",
+	Desc = "https://discord.gg/" .. InviteCode,
+});
+DiscordLinkButton = Tabs.InformationTab:Button({
+	Title = "Copy Link",
+	Callback = function()
+		setclipboard("https://discord.gg/" .. InviteCode);
+	end
+});
+Tabs.InformationTab:Divider();
+GameTimeParagraph = Tabs.InformationTab:Paragraph({
+	Title = "Game Time",
+	Desc = "0",
+	Image = "timer",
+	ImageSize = 20
+});
+spawn(function()
+	while task.wait() do
+		pcall(function()
+			local GameTime = math.floor(workspace.DistributedGameTime + 0.5);
+			local Hour = math.floor(GameTime / 60 ^ 2) % 24;
+			local Minute = math.floor(GameTime / 60 ^ 1) % 60;
+			local Second = math.floor(GameTime / 60 ^ 0) % 60;
+			GameTimeParagraph:SetDesc(Hour .. " Hours " .. Minute .. " Minute " .. Second .. " Second");
+		end);
+	end;
+end);
+FpsParagraph = Tabs.InformationTab:Paragraph({
+	Title = "Fps",
+	Desc = "0",
+	Image = "monitor",
+	ImageSize = 20
+});
+spawn(function()
+	while task.wait() do
+		pcall(function()
+			FpsParagraph:SetDesc(workspace:GetRealPhysicsFPS());
+		end);
+	end;
+end);
+PingParagraph = Tabs.InformationTab:Paragraph({
+	Title = "Ping",
+	Desc = "0",
+	Image = "signal",
+	ImageSize = 20
+});
+spawn(function()
+	while task.wait() do
+		pcall(function()
+			PingParagraph:SetDesc((game:GetService("Stats")).Network.ServerStatsItem["Data Ping"]:GetValueString());
+		end);
+	end;
+end);
+
+BrainrotSection = Tabs.MainTab:Section({
+    Title = "Brainrot",
+    TextXAlignment = "Left"
+})
+FilterBrainrotParagraph = BrainrotSection:Paragraph({
+    Title = "Filter",
+    Desc = "This filter helps make Brainrot decisions more specific to your requirements",
+})
+
+CollectBrainrotModeDropdown = BrainrotSection:Dropdown({
+	Title = "Mode",
+	Values = modeList,
+	Value =  _G.CollectBrainrotMode,
+	Callback = function(option)
+		_G.CollectBrainrotMode = option;
+	end
+});
+CollectBrainrotTypeDropdown = BrainrotSection:Dropdown({
+	Title = "Type",
+	Values = typeList,
+	Value =  _G.CollectBrainrotType,
+	Callback = function(option)
+		_G.CollectBrainrotType = option;
+	end
+});
+CollectBrainrotClassDropdown = BrainrotSection:Dropdown({
+	Title = "Class",
+	Values = classList,
+	Value =  {},
+    Multi = true,
+    AllowNone = true,
+	Callback = function(option)
+		_G.CollectBrainrotClass = option;
+	end
+});
+CollectBrainrotMutationDropdown = BrainrotSection:Dropdown({
+	Title = "Mutation",
+	Values = mutationList,
+	Value =  {},
+    Multi = true,
+    AllowNone = true,
+	Callback = function(option)
+		_G.CollectBrainrotMutation = option;
+	end
+});
+CollectBrainrotDropdown = BrainrotSection:Dropdown({
+	Title = "Brainrot",
+	Values = brainrotList,
+	Value =  {},
+    Multi = true,
+    AllowNone = true,
+	Callback = function(option)
+		_G.CollectBrainrot = option;
+	end
+});
+AutoCollectBrainrotToggle = BrainrotSection:Toggle({
+    Title = "Auto Collect Brainrot",
+    Desc = "Will take Brainrot with specifications of filter",
+    Callback = function(state)
+        _G.AutoCollectBrainrot = state
+        StopTween(_G.AutoCollectBrainrot)
+    end
+})
+
+function CollectFilteredBrainrots()
+    local Brainrots = _G.CollectBrainrot or {};
+    local Classes = _G.CollectBrainrotClass or {};
+    local Mutations = _G.CollectBrainrotMutation or {};
+    local allBrainrots = getAllActiveBrainrots();
+
+    local CollectType = _G.CollectBrainrotType
+
+    for _, brainrot in ipairs(allBrainrots) do
+        local allow = true
+
+        if #Brainrots > 0 and not table.find(Brainrots, getBrainrotName(brainrot)) then
+            allow = false
+        end
+
+        if allow and #Classes > 0 and not table.find(Classes, getBrainrotClass(getBrainrotName(brainrot))) then
+            allow = false
+        end
+
+        if allow and #Mutations > 0 and not table.find(Mutations, getBrainrotMutation(brainrot)) then
+            allow = false
+        end
+
+            if allow and CollectType == "Whitelist" then
+                if (isSingleCarriedBrainrot() and _G.CollectBrainrotMode == "Single") or (isMaxCarriedBrainrot() and _G.CollectBrainrotMode == "Max Carry") then
+                    BackToBase()
+                else
+                    local distance = (brainrot.Root.Position - HumanoidRootPart.Position).Magnitude
+                    if distance > 200 and predictNextGap() then
+                        TweenPlayer(CFrame.new(getNextGap().WorldPivot.Position.X, -9.025, getNextGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+                    elseif distance < 200 and (not detectFrontClosestWave(300) and not detectBackClosestWave(100)) then
+                        TweenPlayer(CFrame.new(brainrot.Root.Position))
+                        takeBrainrot(brainrot)
+                        wait(0.1)
+                    else  
+                        TweenPlayer(CFrame.new(getClosestGap().WorldPivot.Position.X, -9.025, getClosestGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+                    end
+
+                    break
+                end
+            
+            elseif not allow and CollectType == "Blacklist" then
+            
+                if (isSingleCarriedBrainrot() and _G.CollectBrainrotMode == "Single") or (isMaxCarriedBrainrot() and _G.CollectBrainrotMode == "Max Carry") then
+                    BackToBase()
+                else
+                    local distance = (brainrot.Root.Position - HumanoidRootPart.Position).Magnitude
+                    if distance > 200 and predictNextGap() then
+                        TweenPlayer(CFrame.new(getNextGap().WorldPivot.Position.X, -9.025, getNextGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+                    elseif distance < 200 and (not detectFrontClosestWave(300) and not detectBackClosestWave(100)) then
+                        TweenPlayer(CFrame.new(brainrot.Root.Position))
+                        takeBrainrot(brainrot)   
+                        wait(0.1)
+                    else
+                        TweenPlayer(CFrame.new(getClosestGap().WorldPivot.Position.X, -9.025, getClosestGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+                    end
+
+                    break
+                end
+            
+            end
+        
+    end
+    
+end
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.AutoCollectBrainrot then
+				CollectFilteredBrainrots()
+			end;
+		end);
+	end;
+end);
+
+----
+
+LuckyBlockSection = Tabs.MainTab:Section({
+    Title = "Lucky Block",
+    TextXAlignment = "Left"
+})
+FilterParagraph = LuckyBlockSection:Paragraph({
+    Title = "Filter",
+    Desc = "This filter helps make luckyblock decisions more specific to your requirements",
+})
+
+CollectLuckyBlockTypeDropdown = LuckyBlockSection:Dropdown({
+	Title = "Type",
+	Values = typeList,
+	Value =  _G.CollectLuckyBlockType,
+	Callback = function(option)
+		_G.CollectLuckyBlockType = option;
+	end
+});
+CollectLuckyBlockClassDropdown = LuckyBlockSection:Dropdown({
+	Title = "Class",
+	Values = classList,
+	Value =  {},
+    Multi = true,
+    AllowNone = true,
+	Callback = function(option)
+		_G.CollectLuckyBlockClass = option;
+	end
+});
+CollectLuckyBlockMutationDropdown = LuckyBlockSection:Dropdown({
+	Title = "Mutation",
+	Values = mutationList,
+	Value =  {},
+    Multi = true,
+    AllowNone = true,
+	Callback = function(option)
+		_G.CollectLuckyBlockMutation = option;
+	end
+});
+AutoCollectLuckyBlockToggle = LuckyBlockSection:Toggle({
+    Title = "Auto Collect Lucky Block",
+    Desc = "Will take Lucky Block with specifications of filter",
+    Callback = function(state)
+        _G.AutoCollectLuckyBlock = state
+        StopTween(_G.AutoCollectLuckyBlock)
+    end
+})
+
+function CollectFilteredLuckyBlocks()
+    local Classes = _G.CollectLuckyBlockClass or {};
+    local Mutations = _G.CollectLuckyBlockMutation or {};
+    local allLuckyBlocks = getAllActiveLuckyBlocks();
+
+    local CollectType = _G.CollectLuckyBlockType
+
+    for _, luckyBlock in ipairs(allLuckyBlocks) do
+        local allow = true
+
+        if allow and #Classes > 0 then
+            allow = false
+
+            for _, className in ipairs(Classes) do
+                if luckyBlock.Name:find(className) then
+                    allow = true
+                    break
+                end
+            end
+        end
+
+
+        if allow and #Mutations > 0 and not table.find(Mutations, getLuckyBlockMutation(luckyBlock)) then
+            allow = false
+        end
+
+        if allow and CollectType == "Whitelist" then
+            if isSingleCarriedLuckyBlock() then
+                BackToBase()
+            else
+                local distance = (luckyBlock.RootPart.Position - HumanoidRootPart.Position).Magnitude
+                if distance > 200 and predictNextGap() then
+                    TweenPlayer(CFrame.new(getNextGap().WorldPivot.Position.X, -9.025, getNextGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+                elseif distance < 200 and (not detectFrontClosestWave(300) and not detectBackClosestWave(100)) then
+                    TweenPlayer(CFrame.new(luckyBlock.RootPart.Position))
+                    takeLuckyBlock(luckyBlock)
+                    wait(0.1)
+                else  
+                    TweenPlayer(CFrame.new(getClosestGap().WorldPivot.Position.X, -9.025, getClosestGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+                end
+
+                break
+            end
+        
+        elseif not allow and CollectType == "Blacklist" then
+        
+            if isSingleCarriedLuckyBlock() then
+                BackToBase()
+            else
+                local distance = (luckyBlock.RootPart.Position - HumanoidRootPart.Position).Magnitude
+                if distance > 200 and predictNextGap() then
+                    TweenPlayer(CFrame.new(getNextGap().WorldPivot.Position.X, -9.025, getNextGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+                elseif distance < 200 and (not detectFrontClosestWave(300) and not detectBackClosestWave(100)) then
+                    TweenPlayer(CFrame.new(luckyBlock.RootPart.Position))
+                    takeLuckyBlock(luckyBlock)   
+                    wait(0.1)
+                else
+                    TweenPlayer(CFrame.new(getClosestGap().WorldPivot.Position.X, -9.025, getClosestGap().WorldPivot.Position.Z) * CFrame.new(0, 6, 0))
+                end
+
+                break
+            end
+        
+        end
+	end
+end
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.AutoCollectLuckyBlock then
+				CollectFilteredLuckyBlocks()
+			end;
+		end);
+	end;
+end);
+-- PlaceBrainrotSection = Tabs.MainTab:Section({
+--     Title = "Place Brainrot",
+--     TextXAlignment = "Left"
+-- })
+-- AutoPlaceBrainrotToggle = PlaceBrainrotSection:Toggle({
+--     Title = "Auto Place Brainrot",
+--     Desc = "Place Brainrot From Backpack",
+--     Callback = function(state)
+--         _G.AutoPlaceBrainrot = state
+--     end
+-- })
+-- function getActionProximityPrompt(slot, act)
+--     for i, v in pairs(slot.Root.Attachment:GetChildren()) do
+--         if v.Name == "ProximityPrompt" and string.find(v.ActionText, act) then
+--             v.HoldDuration = 0
+--             return v
+--         end
+--     end
+--     return nil
+-- end
+-- AutoPlaceBestBrainrotToggle = PlaceBrainrotSection:Toggle({
+--     Title = "Auto Place Best Brainrot",
+--     Desc = "Place Best Brainrot From Backpack",
+--     Callback = function(state)
+--         _G.AutoPlaceBestBrainrot = state
+--     end
+-- })
+
+UFOEventsSection = Tabs.EventTab:Section({
+    Title = "UFO Events",
+    TextXAlignment = "Left"
+})
+
+AutoCollectUFOCoinsToggle = UFOEventsSection:Toggle({
+    Title = "Auto Collect UFO Coins",
+    Desc = "Collect Coins",
+    Callback = function(state)
+        _G.AutoCollectUFOCoins = state
+    end
+})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.AutoCollectUFOCoins then
+				collectAllUFOEventCoins()
+			end;
+		end);
+	end;
+end);
+
+AutoSpinUFOWheelToggle = UFOEventsSection:Toggle({
+    Title = "Auto Spin UFO Wheel",
+    Desc = "Spin Wheel",
+    Callback = function(state)
+        _G.AutoSpinUFOWheel = state
+    end
+})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.AutoSpinUFOWheel then
+				Net:WaitForChild("RF/WheelSpin.Roll"):InvokeServer("UFO", false)
+			end;
+		end);
+	end;
+end);
+
+RadioactiveEventsSection = Tabs.EventTab:Section({
+    Title = "Radioactive Events",
+    TextXAlignment = "Left"
+})
+
+AutoCollectRadioactiveCoinsToggle = RadioactiveEventsSection:Toggle({
+    Title = "Auto Collect Radioactive Coins",
+    Desc = "Collect Coins",
+    Callback = function(state)
+        _G.AutoCollectRadioactiveCoins = state
+    end
+})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.AutoCollectRadioactiveCoins then
+				collectAllRadioactiveEventCoins()
+			end;
+		end);
+	end;
+end);
+
+AutoSpinRadioactiveWheelToggle = RadioactiveEventsSection:Toggle({
+    Title = "Auto Spin Radioactive Wheel",
+    Desc = "Spin Wheel",
+    Callback = function(state)
+        _G.AutoSpinRadioactiveWheel = state
+    end
+})
+
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.AutoSpinRadioactiveWheel then
+				Net:WaitForChild("RF/WheelSpin.Roll"):InvokeServer()
+			end;
+		end);
+	end;
+end);
+
+UpgradeSection = Tabs.MainTab:Section({
+    Title = "Upgrade",
+    TextXAlignment = "Left"
+})
+UpgradeDelaySlider = UpgradeSection:Slider({
+	Title = "Upgrade Delay /s",
+	Step = 1,
+	Value = {
+		Min = 0,
+		Max = 60,
+		Value = _G.UpgradeDelay or 0
+	},
+	Callback = function(value)
+		_G.UpgradeDelay = value;
+	end
+});
+
+AutoUpgradeBrainrotToggle = UpgradeSection:Toggle({
+    Title = "Auto Upgrade Brainrot",
+    Desc = "Automatically upgrade all brainrot",
+    Callback = function(state)
+        _G.AutoUpgradeBrainrot = state
+    end
+})
+spawn(function()
+    while wait() do
+        if _G.AutoUpgradeBrainrot then
+            pcall(function()
+                for i, v in pairs(getFilledSlots(getMyBase())) do
+                    upgradeBrainrot(v.Name)
+                end
+                wait(_G.UpgradeDelay)
+            end)
+        end
+    end
+end)
+AutoUpgradeBaseToggle = UpgradeSection:Toggle({
+    Title = "Auto Upgrade Base",
+    Desc = "Automatically upgrade base",
+    Callback = function(state)
+        _G.AutoUpgradeBase = state
+    end
+})
+spawn(function()
+    while wait() do
+        if _G.AutoUpgradeBase then
+            pcall(function()
+                upgradeBase()
+                wait(_G.UpgradeDelay)
+            end)
+        end
+    end
+end)
+AutoUpgradeSpeedToggle = UpgradeSection:Toggle({
+    Title = "Auto Upgrade Speed",
+    Desc = "Automatically upgrade speed",
+    Callback = function(state)
+        _G.AutoUpgradeSpeed = state
+    end
+})
+spawn(function()
+    while wait() do
+        if _G.AutoUpgradeSpeed then
+            pcall(function()
+                upgradeSpeed(1)
+                wait(_G.UpgradeDelay)
+            end)
+        end
+    end
+end)
+AutoUpgradeCarryToggle = UpgradeSection:Toggle({
+    Title = "Auto Upgrade Carry",
+    Desc = "Automatically upgrade Carry",
+    Callback = function(state)
+        _G.AutoUpgradeCarry = state
+    end
+})
+spawn(function()
+    while wait() do
+        if _G.AutoUpgradeCarry then
+            pcall(function()
+                if LocalPlayer:GetAttribute("MaxCarry") >= 6 then return end
+                upgradeCarry()
+                wait(_G.UpgradeDelay)
+            end)
+        end
+    end
+end)
+MoneySection = Tabs.MainTab:Section({
+    Title = "Money",
+    TextXAlignment = "Left"
+})
+CollectDelaySlider = MoneySection:Slider({
+	Title = "Collect Delay /s",
+	Step = 1,
+	Value = {
+		Min = 0,
+		Max = 60,
+		Value = _G.CollectDelay or 0
+	},
+	Callback = function(value)
+		_G.CollectDelay = value;
+	end
+});
+
+AutoCollectMoneyToggle = MoneySection:Toggle({
+    Title = "Auto Collect Money",
+    Desc = "Automatically take money in all brainrot",
+    Callback = function(state)
+        _G.AutoCollectMoney = state
+    end
+})
+spawn(function()
+    while wait() do
+        if _G.AutoCollectMoney then
+            pcall(function()
+                for i, v in pairs(getFilledSlots(getMyBase())) do
+                    collectMoney(v.Name)
+                end
+                wait(_G.CollectDelay)
+            end)
+        end
+    end
+end)
+
+SellSection = Tabs.MainTab:Section({
+    Title = "Sell",
+    TextXAlignment = "Left"
+})
+FilterParagraph = SellSection:Paragraph({
+    Title = "Filter",
+    Desc = "This filter helps make brainrot decisions more specific to your requirements",
+})
+SellTypeDropdown = SellSection:Dropdown({
+	Title = "Type",
+	Values = typeList,
+	Value =  nil,
+	Callback = function(option)
+		_G.SellBrainrotType = option;
+	end
+});
+SellClassDropdown = SellSection:Dropdown({
+	Title = "Class",
+	Values = classList,
+	Value =  {},
+    Multi = true,
+    AllowNone = true,
+	Callback = function(option)
+		_G.SellClass = option;
+	end
+});
+SellMutationDropdown = SellSection:Dropdown({
+	Title = "Mutation",
+	Values = mutationList,
+	Value =  {},
+    Multi = true,
+    AllowNone = true,
+	Callback = function(option)
+		_G.SellBrainrotMutation = option;
+	end
+});
+SellBrainrotDropdown = SellSection:Dropdown({
+	Title = "Brainrot",
+	Values = brainrotList,
+	Value =  {},
+    Multi = true,
+    AllowNone = true,
+	Callback = function(option)
+		_G.SellBrainrot = option;
+	end
+});
+AutoSellBrainrotToggle = SellSection:Toggle({
+    Title = "Auto Sell Brainrot",
+    Desc = "Will sell brainrot in backpack with specifications of filter",
+    Callback = function(state)
+        _G.AutoSellBrainrot = state
+    end
+})
+function SellFilteredBrainrots()
+    local Brainrots = _G.SellBrainrot or {};
+    local Classes = _G.SellBrainrotClass or {};
+    local Mutations = _G.SellBrainrotMutation or {};
+
+    for _, brainrot in ipairs(getAllBrainrotsBackpack()) do
+        local allow = true
+
+        if #Brainrots > 0 and not table.find(Brainrots, getBrainrotName(brainrot)) then
+            allow = false
+        end
+
+        if allow and #Classes > 0 and not table.find(Classes, getBrainrotClass(getBrainrotName(brainrot))) then
+            allow = false
+        end
+
+        if allow and #Mutations > 0 and not table.find(Mutations, getBrainrotMutation(brainrot)) then
+            allow = false
+        end
+
+        if allow then
+            EquipWeapon(brainrot.Name)
+            sellHold()
+        end
+	end
+end
+spawn(function()
+	while wait() do
+		pcall(function()
+			if _G.AutoSellBrainrot then
+				SellFilteredBrainrots()
+			end;
+		end);
+	end;
+end);
+-- BaseSection = Tabs.MainTab:Section({
+--     Title = "Base",
+--     TextXAlignment = "Left"
+-- })
+-- FilterParagraph = BaseSection:Paragraph({
+--     Title = "Filter",
+--     Desc = "This filter helps make brainrot decisions more specific to your requirements",
+-- })
+-- BaseTypeDropdown = BaseSection:Dropdown({
+-- 	Title = "Type",
+-- 	Values = typeList,
+-- 	Value =  nil,
+-- 	Callback = function(option)
+-- 		_G.BaseBrainrotType = option;
+-- 	end
+-- });
+-- BaseClassDropdown = BaseSection:Dropdown({
+-- 	Title = "Class",
+-- 	Values = classList,
+-- 	Value =  {},
+--     Multi = true,
+--     AllowNone = true,
+-- 	Callback = function(option)
+-- 		_G.BaseClass = option;
+-- 	end
+-- });
+-- BaseMutationDropdown = BaseSection:Dropdown({
+-- 	Title = "Mutation",
+-- 	Values = mutationList,
+-- 	Value =  {},
+--     Multi = true,
+--     AllowNone = true,
+-- 	Callback = function(option)
+-- 		_G.BaseBrainrotMutation = option;
+-- 	end
+-- });
+-- BaseBrainrotDropdown = BaseSection:Dropdown({
+-- 	Title = "Brainrot",
+-- 	Values = brainrotList,
+-- 	Value =  {},
+--     Multi = true,
+--     AllowNone = true,
+-- 	Callback = function(option)
+-- 		_G.BaseBrainrot = option;
+-- 	end
+-- });
+
+-- function ActionFilteredBrainrots()
+--     local Brainrots = _G.SellBrainrot or {};
+--     local Classes = _G.SellBrainrotClass or {};
+--     local Mutations = _G.SellBrainrotMutation or {};
+
+--     for _, brainrot in ipairs(getFilledSlots()) do
+--         local allow = true
+
+--         if #Brainrots > 0 and not table.find(Brainrots, getBrainrotName(brainrot)) then
+--             allow = false
+--         end
+
+--         if allow and #Classes > 0 and not table.find(Classes, getBrainrotClass(getBrainrotName(brainrot))) then
+--             allow = false
+--         end
+
+--         if allow and #Mutations > 0 and not table.find(Mutations, getBrainrotMutation(brainrot)) then
+--             allow = false
+--         end
+
+--         if allow then
+--             EquipWeapon(brainrot.Name)
+--             sellHold()
+--         end
+-- 	end
+-- end
+
+RebirthSection = Tabs.MainTab:Section({
+    Title = "Rebirth",
+    TextXAlignment = "Left"
+})
+MultiplierRebirthParagraph = RebirthSection:Paragraph({
+    Title = "Multiplier",
+    Desc = "-"
+})
+task.spawn(function()
+    while wait() do
+        local multiplierBeforeRebirth = LocalPlayer.PlayerGui.Menus.Rebirth.CurrentRebirth.Multiplier.Info.Text
+        local multiplierAfterRebirth = LocalPlayer.PlayerGui.Menus.Rebirth.NextRebirth.Multiplier.Info.Text
+        
+        local text = multiplierBeforeRebirth .. " -> " .. multiplierAfterRebirth
+        MultiplierRebirthParagraph:SetDesc(text)
+    end
+end)
+AutoRebirthToggle = RebirthSection:Toggle({
+    Title = "Auto Rebirth",
+    Desc = "Automatic rebirth if the speed is met",
+    Callback = function(state)
+        _G.AutoRebirth = state
+    end
+})
+spawn(function()
+    while wait() do
+        if _G.AutoRebirth then
+            pcall(function()
+                -- local requiredSpeedRebirth = RebirthModule.RebirthToRequiredSpeed(LocalPlayer:GetAttribute("Rebirth") + 1)
+                -- local currentSpeed = LocalPlayer:GetAttribute("CurrentSpeed")
+                -- if requiredSpeedRebirth > currentSpeed then return end
+                rebirth()
+            end)
+        end
+    end
+end)
+HighestGapSection = Tabs.TeleportTab:Section({
+    Title = "Highest Gap",
+    TextXAlignment = "Left"
+})
+TeleportToHighestGap = HighestGapSection:Toggle({
+    Title = "Teleport",
+    Desc = "Teleport To Highest Gap",
+    Callback = function(state)
+        _G.TeleportToHighestGap = state
+    end
+})
+spawn(function()
+    while wait() do
+        if _G.TeleportToHighestGap then
+            pcall(function()
+                ToHighestGap()
+            end)
+        end
+    end
+end)
+
+BackToBaseSection = Tabs.TeleportTab:Section({
+    Title = "Back Base",
+    TextXAlignment = "Left"
+})
+TeleportToBackToBase = BackToBaseSection:Toggle({
+    Title = "Teleport",
+    Desc = "Teleport To Base",
+    Callback = function(state)
+        _G.TeleportToBackToBase = state
+    end
+})
+spawn(function()
+    while wait() do
+        if _G.TeleportToBackToBase then
+            pcall(function()
+                BackToBase()
+            end)
+        end
+    end
+end)
+
+DoubleSpeedSection = Tabs.MiscTab:Section({
+    Title = "DoubleSpeed",
+    TextXAlignment = "Left"
+})
+EnableDoubleSpeedToggle = DoubleSpeedSection:Toggle({
+    Title = "Enable Double Speed",
+    Callback = function(state)
+        LocalPlayer:SetAttribute("HasDoubleSpeed", state)
+    end
+})
+HitboxSection = Tabs.MiscTab:Section({
+    Title = "Hitbox",
+    TextXAlignment = "Left"
+})
+BatHitboxValueSlider = HitboxSection:Slider({
+	Title = "Bat Hitbox",
+	Step = 1,
+	Value = {
+		Min = 3,
+		Max = 50,
+		Value = _G.BatHitboxValue or 20
+	},
+	Callback = function(value)
+		_G.BatHitboxValue = value;
+	end
+});
+SetBatHitboxToggle = HitboxSection:Toggle({
+    Title = "Set Hitbox",
+    Desc = "Change the hitting distance",
+    Callback = function(state)
+        _G.SetBatHitbox = state
+    end
+})
+spawn(function()
+    while wait() do
+        if _G.SetBatHitbox then
+            pcall(function()
+                local tool = getTool("Basic Bat")
+                tool.Hitbox.Size = Vector3.new(_G.BatHitboxValue, _G.BatHitboxValue, _G.BatHitboxValue)
+            end)
+        end
+    end
+end)
+ServerSection = Tabs.ServerTab:Section({
+	Title = "Server",
+	TextXAlignment = "Left"
+});
+RejoinServerButton = ServerSection:Button({
+	Title = "Rejoin Server",
+	Callback = function()
+		SlhubModule:Rejoin()
+	end
+});
+HopServerButton = ServerSection:Button({
+	Title = "Hop Server",
+	Callback = function()
+		SlhubModule:HopServer(true)
+	end
+});
+ServerSection:Divider();
+JobIdParagraph = ServerSection:Paragraph({
+	Title = "Job ID",
+	Desc = game.JobId
+});
+CopyJobIdButton = ServerSection:Button({
+	Title = "Copy Job ID",
+	Callback = function()
+		setclipboard(game.JobId);
+	end
+});
+JobIdInput = ServerSection:Input({
+	Title = "Job ID",
+	Placeholder = "Enter Job ID",
+	Type = "Input",
+	Callback = function(value)
+		_G.JobId = value;
+	end
+});
+JoinJobIdServerButton = ServerSection:Button({
+	Title = "Join Job ID",
+	Callback = function()
+		SlhubModule:JoinJobId(_G.JobId)
+	end
+});
