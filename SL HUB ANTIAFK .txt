@@ -1,0 +1,176 @@
+repeat task.wait() until game:IsLoaded()
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Stats = game:GetService("Stats")
+local Lighting = game:GetService("Lighting")
+local LocalPlayer = Players.LocalPlayer
+
+if getgenv().SL_HUB_AFK then return end
+getgenv().SL_HUB_AFK = true
+
+local startTime = tick()
+
+local Gui = Instance.new("ScreenGui", game.CoreGui)
+Gui.Name = "SL_HUB_AFK"
+
+local Main = Instance.new("Frame", Gui)
+Main.Size = UDim2.new(0,180,0,160)
+Main.Position = UDim2.new(0.82,0,0.12,0)
+Main.BackgroundColor3 = Color3.fromRGB(15,15,15)
+Main.BorderSizePixel = 0
+Main.Active = true
+Main.Draggable = true
+Instance.new("UICorner", Main)
+
+local Stroke = Instance.new("UIStroke", Main)
+Stroke.Thickness = 1.2
+
+local hue = 0
+RunService.RenderStepped:Connect(function()
+	hue = (hue + 0.003) % 1
+	Stroke.Color = Color3.fromHSV(hue,1,1)
+end)
+
+local Top = Instance.new("Frame", Main)
+Top.Size = UDim2.new(1,0,0,24)
+Top.BackgroundColor3 = Color3.fromRGB(20,20,20)
+Top.BorderSizePixel = 0
+Instance.new("UICorner", Top)
+
+local Title = Instance.new("TextLabel", Top)
+Title.Size = UDim2.new(1,0,1,0)
+Title.BackgroundTransparency = 1
+Title.Text = "SL HUB | ANTIAFK"
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 11
+Title.TextColor3 = Color3.fromRGB(255,255,255)
+
+RunService.RenderStepped:Connect(function()
+	Title.TextColor3 = Color3.fromHSV(hue,1,1)
+end)
+
+local CloseButton = Instance.new("TextButton", Top)
+CloseButton.Size = UDim2.new(0,20,0,20)
+CloseButton.Position = UDim2.new(1,-22,0,2)
+CloseButton.BackgroundColor3 = Color3.fromRGB(180,50,50)
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255,255,255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 14
+Instance.new("UICorner", CloseButton)
+CloseButton.MouseButton1Click:Connect(function()
+	Gui:Destroy()
+end)
+
+local MinimizeButton = Instance.new("TextButton", Top)
+MinimizeButton.Size = UDim2.new(0,20,0,20)
+MinimizeButton.Position = UDim2.new(1,-46,0,2)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(50,50,180)
+MinimizeButton.Text = "-"
+MinimizeButton.TextColor3 = Color3.fromRGB(255,255,255)
+MinimizeButton.Font = Enum.Font.GothamBold
+MinimizeButton.TextSize = 14
+Instance.new("UICorner", MinimizeButton)
+
+local minimized = false
+local Icon
+MinimizeButton.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	if minimized then
+		Main.Visible = false
+		Icon = Instance.new("ImageButton", Gui)
+		Icon.Size = UDim2.new(0,50,0,50)
+		Icon.Position = UDim2.new(0.82,0,0.12,0)
+		Icon.BackgroundColor3 = Color3.fromRGB(50,50,180)
+		Icon.Image = "rbxassetid://119025343914379"
+		Instance.new("UICorner", Icon).CornerRadius = UDim.new(0.5,0)
+		Icon.Active = true
+		Icon.Draggable = true
+		Icon.MouseButton1Click:Connect(function()
+			Main.Visible = true
+			Icon:Destroy()
+			minimized = false
+		end)
+	else
+		if Icon then
+			Icon:Destroy()
+		end
+		Main.Visible = true
+	end
+end)
+
+local function createStat(yPos, text)
+	local label = Instance.new("TextLabel", Main)
+	label.Size = UDim2.new(1,0,0,18)
+	label.Position = UDim2.new(0,0,yPos,0)
+	label.BackgroundTransparency = 1
+	label.Font = Enum.Font.Gotham
+	label.TextSize = 11
+	label.TextColor3 = Color3.fromRGB(220,220,220)
+	label.Text = text
+	return label
+end
+
+local TimeLabel = createStat(0.22, "Time: 00:00:00")
+local FPSLabel  = createStat(0.38, "FPS: 0")
+local PingLabel = createStat(0.52, "Ping: 0 ms")
+
+local BoostButton = Instance.new("TextButton", Main)
+BoostButton.Size = UDim2.new(1,-16,0,22)
+BoostButton.Position = UDim2.new(0,8,0.72,0)
+BoostButton.BackgroundColor3 = Color3.fromRGB(25,25,25)
+BoostButton.TextColor3 = Color3.fromRGB(255,255,255)
+BoostButton.Font = Enum.Font.GothamBold
+BoostButton.TextSize = 11
+BoostButton.Text = "🚀 Boost: OFF"
+Instance.new("UICorner", BoostButton)
+
+local boosted = false
+local function enableBoost()
+	Lighting.GlobalShadows = false
+	Lighting.FogEnd = 100000
+	Lighting.Brightness = 1
+	for _, v in pairs(workspace:GetDescendants()) do
+		if v:IsA("BasePart") then
+			v.Material = Enum.Material.Plastic
+			v.Reflectance = 0
+		end
+		if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Smoke") or v:IsA("Fire") or v:IsA("Sparkles") then
+			v.Enabled = false
+		end
+	end
+	settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+end
+
+BoostButton.MouseButton1Click:Connect(function()
+	boosted = not boosted
+	if boosted then
+		enableBoost()
+		BoostButton.Text = "🚀 Boost: ON"
+	else
+		BoostButton.Text = "🚀 Boost: OFF"
+	end
+end)
+
+task.spawn(function()
+	while true do
+		task.wait(1)
+		local elapsed = math.floor(tick() - startTime)
+		local h = math.floor(elapsed/3600)
+		local m = math.floor((elapsed%3600)/60)
+		local s = elapsed%60
+		TimeLabel.Text = string.format("⏰TIME %02d:%02d:%02d",h,m,s)
+		local fps = math.floor(1/RunService.RenderStepped:Wait())
+		FPSLabel.Text = "🚀 FPS "..fps
+		local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
+		PingLabel.Text = "📶 PING "..ping.." ms"
+	end
+end)
+
+LocalPlayer.Idled:Connect(function()
+	local vu = game:GetService("VirtualUser")
+	vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+	task.wait(1)
+	vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+end)
