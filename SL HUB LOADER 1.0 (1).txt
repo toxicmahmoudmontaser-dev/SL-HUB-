@@ -143,48 +143,142 @@ DiscordLogo.BackgroundTransparency = 1
 DiscordLogo.Image = "rbxassetid://80544958215233"
 DiscordLogo.ScaleType = Enum.ScaleType.Fit
 
-for _,btn in pairs({Verify, GetKey}) do
-	btn.MouseEnter:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(70,70,70)}):Play()
-	end)
-	btn.MouseLeave:Connect(function()
-		TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40,40,40)}):Play()
-	end)
-end
-
 Verify.MouseButton1Click:Connect(function()
 	if Box.Text == CORRECT_KEY then
+		Gui:Destroy()
+		local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
 
-		for _,v in pairs(Main:GetChildren()) do
-			if v ~= Logo then
-				v:Destroy()
-			end
-		end
+local LoaderScreenGui = Instance.new("ScreenGui")
+LoaderScreenGui.Name = "SLHUBLOADER"
+LoaderScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+LoaderScreenGui.DisplayOrder = 999998
+LoaderScreenGui.ResetOnSpawn = false
+LoaderScreenGui.Parent = PlayerGui
 
-		local buttonData = {
-	{Text="🍓BLOX FRUITS🍓", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/b5980838d263437a'))()"},
-{Text="💪Muscle Legends💪", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/60e42553f5e94cc3'))()"},
-{Text="⚡Legends Of Speed⚡", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/09afc6d2f223498a'))()"},
-	{Text="🌊Escape Tsunami For brainrots🌊", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/242c991bd1df4150'))()"},
-	{Text="⏰Anti AFK⏰", Script="loadstring(game:HttpGet('https://vss.pandadevelopment.net/virtual/file/2d607a2bef7f49f9'))()"}
+local LoaderFrame = Instance.new("Frame")
+LoaderFrame.Name = "SLHUBLOADER"
+LoaderFrame.AnchorPoint = Vector2.new(0.5,0)
+LoaderFrame.Size = UDim2.new(0,380,0,260)
+LoaderFrame.Position = UDim2.new(0.5,0,-1,-260)
+LoaderFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+LoaderFrame.Active = true
+LoaderFrame.Draggable = true
+LoaderFrame.ClipsDescendants = true
+LoaderFrame.Parent = LoaderScreenGui
+
+Instance.new("UICorner", LoaderFrame).CornerRadius = UDim.new(0,12)
+
+local LoaderStroke = Instance.new("UIStroke")
+LoaderStroke.Color = Color3.fromRGB(160,0,0)
+LoaderStroke.Thickness = 2.5
+LoaderStroke.Parent = LoaderFrame
+
+local LoaderTitle = Instance.new("TextLabel")
+LoaderTitle.Text = " SL HUB LOADER "
+LoaderTitle.Size = UDim2.new(1,0,0,55)
+LoaderTitle.BackgroundTransparency = 1
+LoaderTitle.TextColor3 = Color3.fromRGB(255,100,100)
+LoaderTitle.Font = Enum.Font.GothamBold
+LoaderTitle.TextSize = 20
+LoaderTitle.Parent = LoaderFrame
+
+local Scroll = Instance.new("ScrollingFrame")
+Scroll.Size = UDim2.new(1,-20,1,-70)
+Scroll.Position = UDim2.new(0,10,0,60)
+Scroll.CanvasSize = UDim2.new(0,0,0,400)
+Scroll.ScrollBarThickness = 3
+Scroll.ScrollBarImageColor3 = Color3.fromRGB(160,0,0)
+Scroll.BackgroundTransparency = 1
+Scroll.BorderSizePixel = 0
+Scroll.Parent = LoaderFrame
+
+local Layout = Instance.new("UIListLayout")
+Layout.Padding = UDim.new(0,10)
+Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+Layout.Parent = Scroll
+
+local scripts = {
+    {name="⏰ SL ANTI AFK System",url="https://vss.pandadevelopment.net/virtual/file/2d607a2bef7f49f9"},
+    {name=" 🌊Escape Tsunami For Brainrots! (OP)",url="https://vss.pandadevelopment.net/virtual/file/242c991bd1df4150"},
+    {name="💪 Muscle legends  (OP)",url="https://vss.pandadevelopment.net/virtual/file/60e42553f5e94cc3"},
+    {name="⚡ Legends of Speed  (OP)",url="https://vss.pandadevelopment.net/virtual/file/09afc6d2f223498a"},
+    {name="🍓Blox Fruits",url="https://vss.pandadevelopment.net/virtual/file/b5980838d263437a"}
 }
-		for i, info in ipairs(buttonData) do
-			local btn = Instance.new("TextButton", Main)
-			btn.Size = UDim2.new(0.7,0,0,35)
-			btn.Position = UDim2.new(0.15,0,0.05 + (i-1)*0.18,0)
-			btn.Text = info.Text
-			btn.Font = Enum.Font.GothamBold
-			btn.TextSize = 16
-			btn.TextColor3 = Color3.fromRGB(255,255,255)
-			btn.BackgroundColor3 = Color3.fromRGB(255,0,0)
-			Instance.new("UICorner", btn).CornerRadius = UDim.new(0,10)
 
-			btn.MouseButton1Click:Connect(function()
-				Gui:Destroy()
-				loadstring(info.Script)()
-			end)
-		end
+local function CreateScriptButton(scriptData)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0.9,0,0,42)
+    btn.Text = scriptData.name
+    btn.BackgroundColor3 = Color3.fromRGB(12,12,12)
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 17
+    btn.Parent = Scroll
 
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0,6)
+
+    local btnStroke = Instance.new("UIStroke")
+    btnStroke.Color = Color3.fromRGB(130,0,0)
+    btnStroke.Thickness = 2
+    btnStroke.Parent = btn
+
+    btn.MouseButton1Click:Connect(function()
+        btn.Text = "LOADING..."
+        btn.Active = false
+
+        pcall(function()
+            loadstring(game:HttpGet(scriptData.url))()
+        end)
+
+        local hideTween = TweenService:Create(
+            LoaderFrame,
+            TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+            {Position = UDim2.new(0.5,0,-1,-260)}
+        )
+        hideTween:Play()
+        hideTween.Completed:Connect(function()
+            LoaderScreenGui.Enabled = false
+        end)
+    end)
+end
+
+for _, scriptData in ipairs(scripts) do
+    CreateScriptButton(scriptData)
+end
+
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0,30,0,30)
+CloseBtn.Position = UDim2.new(1,-35,0,10)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(160,0,0)
+CloseBtn.Text = "X"
+CloseBtn.TextColor3 = Color3.fromRGB(255,255,255)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 20
+CloseBtn.Parent = LoaderFrame
+
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0,8)
+
+CloseBtn.MouseButton1Click:Connect(function()
+    local hideTween = TweenService:Create(
+        LoaderFrame,
+        TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
+        {Position = UDim2.new(0.5,0,-1,-260)}
+    )
+    hideTween:Play()
+    hideTween.Completed:Connect(function()
+        LoaderScreenGui.Enabled = false
+    end)
+end)
+
+local showTween = TweenService:Create(
+    LoaderFrame,
+    TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+    {Position = UDim2.new(0.5,0,0.2,0)}
+)
+showTween:Play()
 	else
 		Box.Text = ""
 		Box.PlaceholderText = "Wrong key ❌"
