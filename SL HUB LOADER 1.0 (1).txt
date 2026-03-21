@@ -201,9 +201,9 @@ Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 Layout.Parent = Scroll
 
 local scripts = {
-    {name="⏰ SL ANTI AFK System",url="https://vss.pandadevelopment.net/virtual/file/2d607a2bef7f49f9"},
-    {name=" 🌊Escape Tsunami For Brainrots! (OP)",url="https://vss.pandadevelopment.net/virtual/file/242c991bd1df4150"},
-    {name="💪 Muscle legends  (OP)",url="https://vss.pandadevelopment.net/virtual/file/60e42553f5e94cc3"},
+    {name="⏰ SL ANTI AFK System",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20ANTIAFK%20.txt"},
+    {name=" 🌊Escape Tsunami For Brainrots! (OP)",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20ESCAPE%20TUSNAMI%20(1).txt"},
+    {name="💪 Muscle legends  (OP)",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20MUSCLE%20LEGENDS%20.txt"},
     {name="⚡ Legends of Speed  (OP)",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20LEGENDS%20OF%20SPEED"},
     {name="🍓Blox Fruits",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20BLOX%20FRUITS%20(1).txt"}
 }
