@@ -204,8 +204,8 @@ local scripts = {
     {name="⏰ SL ANTI AFK System",url="https://vss.pandadevelopment.net/virtual/file/2d607a2bef7f49f9"},
     {name=" 🌊Escape Tsunami For Brainrots! (OP)",url="https://vss.pandadevelopment.net/virtual/file/242c991bd1df4150"},
     {name="💪 Muscle legends  (OP)",url="https://vss.pandadevelopment.net/virtual/file/60e42553f5e94cc3"},
-    {name="⚡ Legends of Speed  (OP)",url="https://vss.pandadevelopment.net/virtual/file/09afc6d2f223498a"},
-    {name="🍓Blox Fruits",url="https://vss.pandadevelopment.net/virtual/file/b5980838d263437a"}
+    {name="⚡ Legends of Speed  (OP)",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20LEGENDS%20OF%20SPEED"},
+    {name="🍓Blox Fruits",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20BLOX%20FRUITS%20(1).txt"}
 }
 
 local function CreateScriptButton(scriptData)
