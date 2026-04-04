@@ -35,7 +35,7 @@ WindUI:AddTheme({
 })
 WindUI:SetTheme("slHub Theme")
 Window:EditOpenButton({
-	Icon = "rbxassetid://119025343914379",
+	Icon = "rbxassetid://95942463079177",
 	CornerRadius = UDim.new(0, 10),
 	Position = UDim2.new(0, 75, 0, 100),
 	OnlyMobile = false,
