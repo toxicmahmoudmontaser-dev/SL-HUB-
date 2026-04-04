@@ -1,11 +1,11 @@
 
 local WindUI = (loadstring(game:HttpGet("https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/Blox%20fruit%20gui%20(1).txt")))();
 local Window = WindUI:CreateWindow({
-	Title = "SL HUB",
+	Title = "Nova hub",
 	Author = "BLOX FRUIT",
-	Folder = "SL HUB",
-	Icon = "rbxassetid://119025343914379",
-	Background = "rbxassetid://93825854125347",
+	Folder = "Nova hub",
+	Icon = "rbxassetid://95942463079177",
+	Background = "rbxassetid://938",
 	Size = UDim2.fromOffset(450, 300),
 	MinSize = Vector2.new(520, 330),
 	Transparent = false,
@@ -36,7 +36,7 @@ WindUI:AddTheme({
 })
 WindUI:SetTheme("Slhub Theme")
 Window:EditOpenButton({
-	Icon = "rbxassetid://119025343914379",
+	Icon = "rbxassetid://95942463079177",
 	CornerRadius = UDim.new(0, 10),
 	Position = UDim2.new(0, 75, 0, 100),
 	OnlyMobile = false,
