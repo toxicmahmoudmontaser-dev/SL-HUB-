@@ -64,7 +64,7 @@ request({
 	Body = HttpService:JSONEncode(data)
 })
 
-local CORRECT_KEY = "SLONTOP"
+local CORRECT_KEY = "NOVAONTOP"
 local GET_KEY_LINK = "https://discord.gg/eQ8TgyqUdc"
 
 local Gui = Instance.new("ScreenGui", game.CoreGui)
@@ -92,14 +92,14 @@ local Logo = Instance.new("ImageLabel", Main)
 Logo.Size = UDim2.new(0,40,0,40)
 Logo.Position = UDim2.new(1,-50,0,10)
 Logo.BackgroundTransparency = 1
-Logo.Image = "rbxassetid://119025343914379"
+Logo.Image = "rbxassetid://95942463079177"
 Logo.ScaleType = Enum.ScaleType.Fit
 Instance.new("UICorner", Logo).CornerRadius = UDim.new(1,0)
 
 local Title = Instance.new("TextLabel", Main)
 Title.Size = UDim2.new(1,0,0,50)
 Title.BackgroundTransparency = 1
-Title.Text = "🔒 SL HUB KEY SYSTEM"
+Title.Text = "🔒 NOVA HUB KEY SYSTEM"
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 20
 Title.TextColor3 = Color3.fromRGB(255,255,255)
@@ -177,7 +177,7 @@ LoaderStroke.Thickness = 2.5
 LoaderStroke.Parent = LoaderFrame
 
 local LoaderTitle = Instance.new("TextLabel")
-LoaderTitle.Text = " SL HUB LOADER "
+LoaderTitle.Text = " NOVA HUB LOADER "
 LoaderTitle.Size = UDim2.new(1,0,0,55)
 LoaderTitle.BackgroundTransparency = 1
 LoaderTitle.TextColor3 = Color3.fromRGB(255,100,100)
