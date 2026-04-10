@@ -1,18 +1,19 @@
 repeat task.wait() until game:IsLoaded()
 
+pcall(function()
+	game.CoreGui.SL_HUB_ANTIAFK:Destroy()
+end)
+
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local Stats = game:GetService("Stats")
 local Lighting = game:GetService("Lighting")
 local LocalPlayer = Players.LocalPlayer
 
-if getgenv().SL_HUB_AFK then return end
-getgenv().SL_HUB_AFK = true
-
 local startTime = tick()
 
 local Gui = Instance.new("ScreenGui", game.CoreGui)
-Gui.Name = "SL_HUB_AFK"
+Gui.Name = "SL_HUB_ANTIAFK"
 
 local Main = Instance.new("Frame", Gui)
 Main.Size = UDim2.new(0,180,0,160)
@@ -41,7 +42,7 @@ Instance.new("UICorner", Top)
 local Title = Instance.new("TextLabel", Top)
 Title.Size = UDim2.new(1,0,1,0)
 Title.BackgroundTransparency = 1
-Title.Text = "SL HUB | ANTIAFK"
+Title.Text = "SL HUB ANTIAFK"
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 11
 Title.TextColor3 = Color3.fromRGB(255,255,255)
@@ -59,6 +60,7 @@ CloseButton.TextColor3 = Color3.fromRGB(255,255,255)
 CloseButton.Font = Enum.Font.GothamBold
 CloseButton.TextSize = 14
 Instance.new("UICorner", CloseButton)
+
 CloseButton.MouseButton1Click:Connect(function()
 	Gui:Destroy()
 end)
@@ -75,6 +77,7 @@ Instance.new("UICorner", MinimizeButton)
 
 local minimized = false
 local Icon
+
 MinimizeButton.MouseButton1Click:Connect(function()
 	minimized = not minimized
 	if minimized then
@@ -83,7 +86,7 @@ MinimizeButton.MouseButton1Click:Connect(function()
 		Icon.Size = UDim2.new(0,50,0,50)
 		Icon.Position = UDim2.new(0.82,0,0.12,0)
 		Icon.BackgroundColor3 = Color3.fromRGB(50,50,180)
-		Icon.Image = "rbxassetid://95942463079177"
+		Icon.Image = "rbxassetid://119025343914379"
 		Instance.new("UICorner", Icon).CornerRadius = UDim.new(0.5,0)
 		Icon.Active = true
 		Icon.Draggable = true
@@ -127,6 +130,7 @@ BoostButton.Text = "🚀 Boost: OFF"
 Instance.new("UICorner", BoostButton)
 
 local boosted = false
+
 local function enableBoost()
 	Lighting.GlobalShadows = false
 	Lighting.FogEnd = 100000
@@ -160,9 +164,11 @@ task.spawn(function()
 		local h = math.floor(elapsed/3600)
 		local m = math.floor((elapsed%3600)/60)
 		local s = elapsed%60
-		TimeLabel.Text = string.format("⏰TIME %02d:%02d:%02d",h,m,s)
+		TimeLabel.Text = string.format("⏳ TIME %02d:%02d:%02d",h,m,s)
+
 		local fps = math.floor(1/RunService.RenderStepped:Wait())
 		FPSLabel.Text = "🚀 FPS "..fps
+
 		local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
 		PingLabel.Text = "📶 PING "..ping.." ms"
 	end
