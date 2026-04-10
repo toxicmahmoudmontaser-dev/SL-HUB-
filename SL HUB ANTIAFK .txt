@@ -42,7 +42,7 @@ Instance.new("UICorner", Top)
 local Title = Instance.new("TextLabel", Top)
 Title.Size = UDim2.new(1,0,1,0)
 Title.BackgroundTransparency = 1
-Title.Text = "SL HUB ANTIAFK"
+Title.Text = "NOVA HUB ANTIAFK"
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 11
 Title.TextColor3 = Color3.fromRGB(255,255,255)
