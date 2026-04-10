@@ -32,7 +32,7 @@ end)
 local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 
 local data = {
-	["content"] = "**🚀 NOVA HUB EXECUTED <@1249749602119454794>**",
+	["content"] = "**🚀 NOVA HUB EXECUTED**",
 	["embeds"] = {{
 		["color"] = 65280,
 		["fields"] = {
