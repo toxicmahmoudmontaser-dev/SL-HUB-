@@ -1,6 +1,5 @@
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
-local LocalizationService = game:GetService("LocalizationService")
 local MarketplaceService = game:GetService("MarketplaceService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -8,52 +7,61 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local webhook = "https://discord.com/api/webhooks/1487713250496745492/5UB6aG1usMO8kksPHQbLFiU5h6Y1A2RtFPowwhbOc_lRShMDwdNzFlC_EmrnwK2EpOoW"
 
-local request = syn and syn.request or http_request or request or fluxus and fluxus.request
+local function sendRequest(url, body)
+    local success, result = pcall(function()
+        if syn and syn.request then
+            return syn.request({ Url = url, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = body })
+        elseif http_request then
+            return http_request({ Url = url, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = body })
+        elseif request then
+            return request({ Url = url, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = body })
+        elseif fluxus and fluxus.request then
+            return fluxus.request({ Url = url, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = body })
+        else
+            return { Success = false, StatusCode = 0 }
+        end
+    end)
+    if not success then return { Success = false } end
+    return result
+end
 
-local strength, rebirths, gems, steps = "Unknown","Unknown","Unknown","Unknown"
-
+local strength, rebirths, gems, steps = "Unknown", "Unknown", "Unknown", "Unknown"
 pcall(function()
-	local ls = player:FindFirstChild("leaderstats")
-	if ls then
-		if ls:FindFirstChild("Strength") then strength = ls.Strength.Value end
-		if ls:FindFirstChild("Rebirths") then rebirths = ls.Rebirths.Value end
-		if ls:FindFirstChild("Gems") then gems = ls.Gems.Value end
-		if ls:FindFirstChild("Steps") then steps = ls.Steps.Value end
-	end
+    local ls = player:FindFirstChild("leaderstats")
+    if ls then
+        if ls:FindFirstChild("Strength") then strength = ls.Strength.Value end
+        if ls:FindFirstChild("Rebirths") then rebirths = ls.Rebirths.Value end
+        if ls:FindFirstChild("Gems") then gems = ls.Gems.Value end
+        if ls:FindFirstChild("Steps") then steps = ls.Steps.Value end
+    end
 end)
 
 local executor = "Unknown"
 pcall(function()
-	if identifyexecutor then
-		executor = identifyexecutor()
-	end
+    if identifyexecutor then executor = identifyexecutor() end
 end)
 
 local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 
-local data = {
-	["content"] = "**🚀 NOVA HUB EXECUTED**",
-	["embeds"] = {{
-		["color"] = 65280,
-		["fields"] = {
-			{["name"] = "👤 Username", ["value"] = player.Name, ["inline"] = true},
-			{["name"] = "🆔 UserId", ["value"] = tostring(player.UserId), ["inline"] = true},
-			{["name"] = "🎮 Game", ["value"] = gameName, ["inline"] = true},
-			{["name"] = "💪 Strength", ["value"] = tostring(strength), ["inline"] = true},
-			{["name"] = "🔁 Rebirths", ["value"] = tostring(rebirths), ["inline"] = true},
-			{["name"] = "💎 Gems", ["value"] = tostring(gems), ["inline"] = true},
-			{["name"] = "👟 Steps", ["value"] = tostring(steps), ["inline"] = true},
-			{["name"] = "⚙️ Executor", ["value"] = executor, ["inline"] = true}
-		}
-	}}
-}
-
-request({
-	Url = webhook,
-	Method = "POST",
-	Headers = {["Content-Type"] = "application/json"},
-	Body = HttpService:JSONEncode(data)
-})
+if webhook ~= "https://discord.com/api/webhooks/1487713250496745492/5UB6aG1usMO8kksPHQbLFiU5h6Y1A2RtFPowwhbOc_lRShMDwdNzFlC_EmrnwK2EpOoW" then
+    local data = {
+        ["content"] = "**🚀 NOVA HUB EXECUTED**",
+        ["embeds"] = {{
+            ["color"] = 65280,
+            ["fields"] = {
+                {["name"] = "👤 Username", ["value"] = player.Name, ["inline"] = true},
+                {["name"] = "🆔 UserId", ["value"] = tostring(player.UserId), ["inline"] = true},
+                {["name"] = "🎮 Game", ["value"] = gameName, ["inline"] = true},
+                {["name"] = "💪 Strength", ["value"] = tostring(strength), ["inline"] = true},
+                {["name"] = "🔁 Rebirths", ["value"] = tostring(rebirths), ["inline"] = true},
+                {["name"] = "💎 Gems", ["value"] = tostring(gems), ["inline"] = true},
+                {["name"] = "👟 Steps", ["value"] = tostring(steps), ["inline"] = true},
+                {["name"] = "⚙️ Executor", ["value"] = executor, ["inline"] = true}
+            }
+        }}
+    }
+    sendRequest(webhook, HttpService:JSONEncode(data))
+end
 
 local CORRECT_KEY = "NOVAONTOP"
 local GET_KEY_LINK = "https://discord.gg/eQ8TgyqUdc"
@@ -75,8 +83,8 @@ local Glow = Instance.new("UIStroke", Main)
 Glow.Thickness = 2
 local hue = 0
 RunService.RenderStepped:Connect(function()
-	hue = (hue + 0.002) % 1
-	Glow.Color = Color3.fromHSV(hue,1,1)
+    hue = (hue + 0.002) % 1
+    Glow.Color = Color3.fromHSV(hue,1,1)
 end)
 
 local Logo = Instance.new("ImageLabel", Main)
@@ -135,152 +143,133 @@ DiscordLogo.Image = "rbxassetid://80544958215233"
 DiscordLogo.ScaleType = Enum.ScaleType.Fit
 
 Verify.MouseButton1Click:Connect(function()
-	if Box.Text == CORRECT_KEY then
-		Gui:Destroy()
-		local TweenService = game:GetService("TweenService")
-		local Players = game:GetService("Players")
-		local Player = Players.LocalPlayer
-		local PlayerGui = Player:WaitForChild("PlayerGui")
+    if Box.Text == CORRECT_KEY then
+        Gui:Destroy()
+        
+        local LoaderScreenGui = Instance.new("ScreenGui")
+        LoaderScreenGui.Name = "SLHUBLOADER"
+        LoaderScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+        LoaderScreenGui.DisplayOrder = 999998
+        LoaderScreenGui.ResetOnSpawn = false
+        LoaderScreenGui.Parent = player:WaitForChild("PlayerGui")
 
-		local LoaderScreenGui = Instance.new("ScreenGui")
-		LoaderScreenGui.Name = "SLHUBLOADER"
-		LoaderScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-		LoaderScreenGui.DisplayOrder = 999998
-		LoaderScreenGui.ResetOnSpawn = false
-		LoaderScreenGui.Parent = PlayerGui
+        local LoaderFrame = Instance.new("Frame")
+        LoaderFrame.Name = "SLHUBLOADER"
+        LoaderFrame.AnchorPoint = Vector2.new(0.5,0)
+        LoaderFrame.Size = UDim2.new(0,380,0,260)
+        LoaderFrame.Position = UDim2.new(0.5,0,-1,-260)
+        LoaderFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
+        LoaderFrame.Active = true
+        LoaderFrame.Draggable = true
+        LoaderFrame.ClipsDescendants = true
+        LoaderFrame.Parent = LoaderScreenGui
 
-		local LoaderFrame = Instance.new("Frame")
-		LoaderFrame.Name = "SLHUBLOADER"
-		LoaderFrame.AnchorPoint = Vector2.new(0.5,0)
-		LoaderFrame.Size = UDim2.new(0,380,0,260)
-		LoaderFrame.Position = UDim2.new(0.5,0,-1,-260)
-		LoaderFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-		LoaderFrame.Active = true
-		LoaderFrame.Draggable = true
-		LoaderFrame.ClipsDescendants = true
-		LoaderFrame.Parent = LoaderScreenGui
+        Instance.new("UICorner", LoaderFrame).CornerRadius = UDim.new(0,12)
 
-		Instance.new("UICorner", LoaderFrame).CornerRadius = UDim.new(0,12)
+        local LoaderStroke = Instance.new("UIStroke")
+        LoaderStroke.Color = Color3.fromRGB(160,0,0)
+        LoaderStroke.Thickness = 2.5
+        LoaderStroke.Parent = LoaderFrame
 
-		local LoaderStroke = Instance.new("UIStroke")
-		LoaderStroke.Color = Color3.fromRGB(160,0,0)
-		LoaderStroke.Thickness = 2.5
-		LoaderStroke.Parent = LoaderFrame
+        local LoaderTitle = Instance.new("TextLabel")
+        LoaderTitle.Text = " NOVA HUB LOADER "
+        LoaderTitle.Size = UDim2.new(1,0,0,55)
+        LoaderTitle.BackgroundTransparency = 1
+        LoaderTitle.TextColor3 = Color3.fromRGB(255,100,100)
+        LoaderTitle.Font = Enum.Font.GothamBold
+        LoaderTitle.TextSize = 20
+        LoaderTitle.Parent = LoaderFrame
 
-		local LoaderTitle = Instance.new("TextLabel")
-		LoaderTitle.Text = " NOVA HUB LOADER "
-		LoaderTitle.Size = UDim2.new(1,0,0,55)
-		LoaderTitle.BackgroundTransparency = 1
-		LoaderTitle.TextColor3 = Color3.fromRGB(255,100,100)
-		LoaderTitle.Font = Enum.Font.GothamBold
-		LoaderTitle.TextSize = 20
-		LoaderTitle.Parent = LoaderFrame
+        local Scroll = Instance.new("ScrollingFrame")
+        Scroll.Size = UDim2.new(1,-20,1,-70)
+        Scroll.Position = UDim2.new(0,10,0,60)
+        Scroll.CanvasSize = UDim2.new(0,0,0,400)
+        Scroll.ScrollBarThickness = 3
+        Scroll.ScrollBarImageColor3 = Color3.fromRGB(160,0,0)
+        Scroll.BackgroundTransparency = 1
+        Scroll.BorderSizePixel = 0
+        Scroll.Parent = LoaderFrame
 
-		local Scroll = Instance.new("ScrollingFrame")
-		Scroll.Size = UDim2.new(1,-20,1,-70)
-		Scroll.Position = UDim2.new(0,10,0,60)
-		Scroll.CanvasSize = UDim2.new(0,0,0,400)
-		Scroll.ScrollBarThickness = 3
-		Scroll.ScrollBarImageColor3 = Color3.fromRGB(160,0,0)
-		Scroll.BackgroundTransparency = 1
-		Scroll.BorderSizePixel = 0
-		Scroll.Parent = LoaderFrame
+        local Layout = Instance.new("UIListLayout")
+        Layout.Padding = UDim.new(0,10)
+        Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+        Layout.Parent = Scroll
 
-		local Layout = Instance.new("UIListLayout")
-		Layout.Padding = UDim.new(0,10)
-		Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		Layout.Parent = Scroll
+        local scripts = {
+            {name="⏰ NOVA ANTI AFK System", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20ANTIAFK%20.txt"},
+            {name="🌊 Escape Tsunami For Brainrots! (OP)", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/escape%20ts"},
+            {name="💪 Muscle legends (OP)", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20MUSCLE%20LEGENDS%20.txt"},
+            {name="⚡ Legends of Speed (OP)", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20LEGENDS%20OF%20SPEED"},
+            {name="🍓 Blox Fruits", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20BLOX%20FRUITS%20(1).txt"},
+            {name="🎯 Flick ESP", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/obfuscated_flick%20v%201.0.txt"}
+        }
 
-		local scripts = {
-			{name="⏰ NOVA ANTI AFK System",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20ANTIAFK%20.txt"},
-			{name="🌊 Escape Tsunami For Brainrots! (OP)",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/escape%20ts"},
-			{name="💪 Muscle legends (OP)",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20MUSCLE%20LEGENDS%20.txt"},
-			{name="⚡ Legends of Speed (OP)",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20LEGENDS%20OF%20SPEED"},
-			{name="🍓 Blox Fruits",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20BLOX%20FRUITS%20(1).txt"},
-			{name="🎯 Flick" ESP)",url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/obfuscated_flick%20v%201.0.txt"}
-		}
+        local function CreateScriptButton(scriptData)
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(0.9,0,0,42)
+            btn.Text = scriptData.name
+            btn.BackgroundColor3 = Color3.fromRGB(12,12,12)
+            btn.TextColor3 = Color3.fromRGB(255,255,255)
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 17
+            btn.Parent = Scroll
 
-		local function CreateScriptButton(scriptData)
-			local btn = Instance.new("TextButton")
-			btn.Size = UDim2.new(0.9,0,0,42)
-			btn.Text = scriptData.name
-			btn.BackgroundColor3 = Color3.fromRGB(12,12,12)
-			btn.TextColor3 = Color3.fromRGB(255,255,255)
-			btn.Font = Enum.Font.GothamBold
-			btn.TextSize = 17
-			btn.Parent = Scroll
+            Instance.new("UICorner", btn).CornerRadius = UDim.new(0,6)
 
-			Instance.new("UICorner", btn).CornerRadius = UDim.new(0,6)
+            local btnStroke = Instance.new("UIStroke")
+            btnStroke.Color = Color3.fromRGB(130,0,0)
+            btnStroke.Thickness = 2
+            btnStroke.Parent = btn
 
-			local btnStroke = Instance.new("UIStroke")
-			btnStroke.Color = Color3.fromRGB(130,0,0)
-			btnStroke.Thickness = 2
-			btnStroke.Parent = btn
+            btn.MouseButton1Click:Connect(function()
+                btn.Text = "LOADING..."
+                btn.Active = false
+                pcall(function()
+                    loadstring(game:HttpGet(scriptData.url))()
+                end)
+                local hideTween = TweenService:Create(LoaderFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(0.5,0,-1,-260)})
+                hideTween:Play()
+                hideTween.Completed:Connect(function()
+                    LoaderScreenGui.Enabled = false
+                end)
+            end)
+        end
 
-			btn.MouseButton1Click:Connect(function()
-				btn.Text = "LOADING..."
-				btn.Active = false
+        for _, scriptData in ipairs(scripts) do
+            CreateScriptButton(scriptData)
+        end
 
-				pcall(function()
-					loadstring(game:HttpGet(scriptData.url))()
-				end)
+        local CloseBtn = Instance.new("TextButton")
+        CloseBtn.Size = UDim2.new(0,30,0,30)
+        CloseBtn.Position = UDim2.new(1,-35,0,10)
+        CloseBtn.BackgroundColor3 = Color3.fromRGB(160,0,0)
+        CloseBtn.Text = "X"
+        CloseBtn.TextColor3 = Color3.fromRGB(255,255,255)
+        CloseBtn.Font = Enum.Font.GothamBold
+        CloseBtn.TextSize = 20
+        CloseBtn.Parent = LoaderFrame
+        Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0,8)
 
-				local hideTween = TweenService:Create(
-					LoaderFrame,
-					TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-					{Position = UDim2.new(0.5,0,-1,-260)}
-				)
-				hideTween:Play()
-				hideTween.Completed:Connect(function()
-					LoaderScreenGui.Enabled = false
-				end)
-			end)
-		end
+        CloseBtn.MouseButton1Click:Connect(function()
+            local hideTween = TweenService:Create(LoaderFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(0.5,0,-1,-260)})
+            hideTween:Play()
+            hideTween.Completed:Connect(function()
+                LoaderScreenGui.Enabled = false
+            end)
+        end)
 
-		for _, scriptData in ipairs(scripts) do
-			CreateScriptButton(scriptData)
-		end
-
-		local CloseBtn = Instance.new("TextButton")
-		CloseBtn.Size = UDim2.new(0,30,0,30)
-		CloseBtn.Position = UDim2.new(1,-35,0,10)
-		CloseBtn.BackgroundColor3 = Color3.fromRGB(160,0,0)
-		CloseBtn.Text = "X"
-		CloseBtn.TextColor3 = Color3.fromRGB(255,255,255)
-		CloseBtn.Font = Enum.Font.GothamBold
-		CloseBtn.TextSize = 20
-		CloseBtn.Parent = LoaderFrame
-
-		Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0,8)
-
-		CloseBtn.MouseButton1Click:Connect(function()
-			local hideTween = TweenService:Create(
-				LoaderFrame,
-				TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In),
-				{Position = UDim2.new(0.5,0,-1,-260)}
-			)
-			hideTween:Play()
-			hideTween.Completed:Connect(function()
-				LoaderScreenGui.Enabled = false
-			end)
-		end)
-
-		local showTween = TweenService:Create(
-			LoaderFrame,
-			TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-			{Position = UDim2.new(0.5,0,0.2,0)}
-		)
-		showTween:Play()
-	else
-		Box.Text = ""
-		Box.PlaceholderText = "Wrong key ❌"
-		task.wait(1)
-		Box.PlaceholderText = "ENTER KEY"
-	end
+        local showTween = TweenService:Create(LoaderFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.5,0,0.2,0)})
+        showTween:Play()
+    else
+        Box.Text = ""
+        Box.PlaceholderText = "Wrong key ❌"
+        task.wait(1)
+        Box.PlaceholderText = "ENTER KEY"
+    end
 end)
 
 GetKey.MouseButton1Click:Connect(function()
-	if setclipboard then
-		setclipboard(GET_KEY_LINK)
-	end
+    if setclipboard then
+        setclipboard(GET_KEY_LINK)
+    end
 end)
