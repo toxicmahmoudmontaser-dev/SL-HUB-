@@ -201,7 +201,9 @@ Verify.MouseButton1Click:Connect(function()
             {name="💪 Muscle legends (OP)", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20MUSCLE%20LEGENDS%20.txt"},
             {name="⚡ Legends of Speed (OP)", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20LEGENDS%20OF%20SPEED"},
             {name="🍓 Blox Fruits", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20BLOX%20FRUITS%20(1).txt"},
-            {name="🎯 Flick ESP", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/obfuscated_flick%20v%201.0.txt"}
+            {name="🎯 Flick ESP", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/obfuscated_flick%20v%201.0.txt"},
+            {name="🏁 Race Clicker", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/obfuscated_race%20cllicker.txt"},
+            {name="🔫 Arsenal", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/obfuscated_Arsenal%20(1).txt"}
         }
 
         local function CreateScriptButton(scriptData)
