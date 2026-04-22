@@ -43,7 +43,7 @@ end)
 
 local gameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
 
-if webhook ~= "https://discord.com/api/webhooks/1487713250496745492/5UB6aG1usMO8kksPHQbLFiU5h6Y1A2RtFPowwhbOc_lRShMDwdNzFlC_EmrnwK2EpOoW" then
+if webhook ~= "" then
     local data = {
         ["content"] = "**🚀 NOVA HUB EXECUTED**",
         ["embeds"] = {{
@@ -196,6 +196,7 @@ Verify.MouseButton1Click:Connect(function()
         Layout.Parent = Scroll
 
         local scripts = {
+            {name="🗼 Tower of Hell (OP Auto Farm)", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/obfuscated_Tower%20of%20hell.txt"},
             {name="⏰ NOVA ANTI AFK System", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20ANTIAFK%20.txt"},
             {name="🌊 Escape Tsunami For Brainrots! (OP)", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/escape%20ts"},
             {name="💪 Muscle legends (OP)", url="https://raw.githubusercontent.com/toxicmahmoudmontaser-dev/SL-HUB-/refs/heads/main/SL%20HUB%20MUSCLE%20LEGENDS%20.txt"},
