@@ -125,7 +125,7 @@ Window:SelectTab(1);
 
 
 
--- [[ Initialize Script Variables ]] --
+-- [[ Ass hard game ]] --
 
 _G.GlobalDelay = 0.2
 
@@ -172,7 +172,7 @@ elseif game.PlaceId == 7449423635 then
 	World3 = true;
 end;
 
--- [[ Declare Variables ]] --
+-- [[ Fuck Blox fruits ]] --
 Workspace = game:GetService("Workspace");
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -10618,13 +10618,13 @@ ServerTabSection = Tabs.ServerTab:Section({
 RejoinServerButton = ServerTabSection:Button({
 	Title = "Rejoin Server",
 	Callback = function()
-		RelzhubModule:Rejoin()
+		NovahubModule:Rejoin()
 	end
 });
 ServerHopButton = ServerTabSection:Button({
 	Title = "Server Hop",
 	Callback = function()
-		RelzhubModule:HopServer(true)
+		NovahubModule:HopServer(true)
 	end
 });
 JobIdParagraph = ServerTabSection:Paragraph({
@@ -10646,7 +10646,7 @@ EnterJobIdInput = ServerTabSection:Input({
 JoinJobIdButton = ServerTabSection:Button({
 	Title = "Join Job ID",
 	Callback = function()
-		RelzhubModule:JoinJobId(_G.JobId)
+		NovahubModule:JoinJobId(_G.JobId)
 	end
 });
 StatusServerSection = Tabs.ServerTab:Section({
